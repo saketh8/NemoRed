@@ -74,7 +74,13 @@ export interface ZeroDayIntel {
   publishedDate: string;
 }
 
+export interface SkippedTest {
+  attackerName: string;
+  reason: string;
+}
+
 export interface CampaignState {
+  skippedTests?: SkippedTest[];
   campaignId: string;
   target: TargetAgent;
   model: string;

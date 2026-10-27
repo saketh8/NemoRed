@@ -75,3 +75,24 @@ test('health probes accept reachable token-limited replies while evaluation reje
  await assert.rejects(()=>callNemotron([]),/token limit/);
  }finally{global.fetch=originalFetch;if(key===undefined)delete process.env.NEBIUS_API_KEY;else process.env.NEBIUS_API_KEY=key;}
 });
+test('unavailable attack payload returns a skipped outcome without calling target or judge',async()=>{
+ const swarm=load('src/lib/swarm.ts',{'./nebius':{callNemotron:async()=>({text:'No structured payload'})}});
+ let evaluated=false;
+ const {POST}=load('src/app/api/redteam/attack/route.ts',{
+  'next/server':{NextResponse:{json:(body,options)=>({body,status:options?.status||200})}},
+  '@/lib/personas':{ATTACKER_PERSONAS:[{id:'ghost-injector',name:'Test'}]},
+  '@/lib/swarm':swarm,
+  '@/lib/nebius':{callNemotron:async()=>{evaluated=true;throw new Error('must not run');}},
+  '@/lib/judge':{evaluateTurnVerdict:async()=>{evaluated=true;}},
+  '@/lib/tavily':{fetchZeroDayIntel:async()=>[]},
+  '@/lib/langsmith':{logToLangSmith:async()=>null},
+  '@/lib/validation':load('src/lib/validation.ts'),
+ });
+ const result=await POST({json:async()=>({target:{...target,id:'test',allowedActions:['query']},attackerId:'ghost-injector'})});
+ assert.equal(result.status,422);assert.equal(result.body.code,'NO_VALID_PAYLOAD');assert.equal(result.body.outcome,'skipped');assert.equal(evaluated,false);
+});
+test('exports include skipped coverage without counting it as a defense',async()=>{
+ const {POST}=load('src/app/api/redteam/export/route.ts',{'next/server':{NextResponse:{json:body=>body}}});
+ const result=await POST({json:async()=>({target,turns:[],skippedTests:[{attackerName:'Logic-Breaker',reason:'No valid payload'}],vulnSummary:{critical:0,high:0,medium:0,defended:0},overallRiskScore:0})});
+ assert.match(result.markdown,/Logic-Breaker/);assert.match(result.markdown,/No valid payload/);assert.match(result.markdown,/Clean Defenses:\*\* 0/);
+});

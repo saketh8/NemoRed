@@ -28,9 +28,9 @@ export async function GET() {
       const message = err instanceof Error ? err.message : '';
       reason = /401|403/.test(message) ? 'Nebius rejected the credentials or model access.'
         : /429/.test(message) ? 'Nebius rate limit reached. Retry shortly.'
-        : /404/.test(message) ? 'The configured endpoint or model was not found.'
-        : /abort/i.test(message) ? 'Nebius did not respond within 12 seconds. Retry.'
-        : 'The inference probe failed. Check the endpoint, model, and account access.';
+          : /404/.test(message) ? 'The configured endpoint or model was not found.'
+            : /abort/i.test(message) ? 'Nebius did not respond within 12 seconds. Retry.'
+              : 'The inference probe failed. Check the endpoint, model, and account access.';
       nebiusStatus = 'error';
     }
   }

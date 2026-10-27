@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { TargetAgent, AttackTurn, AttackerId, DefensePatch, ZeroDayIntel } from '@/types';
+import { TargetAgent, AttackTurn, AttackerId, DefensePatch, ZeroDayIntel, SkippedTest } from '@/types';
 import { PRECONFIGURED_TARGETS } from '@/lib/targets';
 import { ATTACKER_PERSONAS } from '@/lib/personas';
 import { Experience } from '@/components/Experience';
@@ -17,6 +17,7 @@ import { AuditReportModal } from '@/components/AuditReportModal';
 export default function Home() {
   const [currentTarget, setCurrentTarget] = useState<TargetAgent>(PRECONFIGURED_TARGETS[0]);
   const [activeModel, setActiveModel] = useState<string>('nvidia/Nemotron-3_5-Lightning');
+  const [skippedTests, setSkippedTests] = useState<SkippedTest[]>([]);
   const [turns, setTurns] = useState<AttackTurn[]>([]);
   const [activeAttackerId, setActiveAttackerId] = useState<AttackerId | null>(null);
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -97,14 +98,14 @@ export default function Home() {
     if (busy) return;
     setIsSample(false);
     setCurrentTarget(target);
-    setTurns([]);
+    setTurns([]); setSkippedTests([]);
     setPatch(null);
   };
 
   // Execute solo attack
   const handleSoloAttack = async (attackerId: AttackerId) => {
     if (busy) return;
-    if (isSample) { setTurns([]); setIsSample(false); }
+    if (isSample) { setTurns([]); setSkippedTests([]); setIsSample(false); }
     setPatch(null);
     setIsRunning(true);
     setActiveAttackerId(attackerId);
@@ -123,6 +124,13 @@ export default function Home() {
 
       if (!res.ok) {
         const errData = await res.json();
+        if (res.status === 422 && errData.code === 'NO_VALID_PAYLOAD') {
+          const attackerName = ATTACKER_PERSONAS.find(p => p.id === attackerId)?.name || attackerId;
+          setSkippedTests(prev => [...prev, { attackerName, reason: errData.error }]);
+          setView('findings');
+          showToast(`${attackerName}: skipped; no target evaluation performed.`, 'info');
+          return;
+        }
         throw new Error(errData.error || 'Attack failed');
       }
 
@@ -146,13 +154,15 @@ export default function Home() {
   const handleRunBlitz = async () => {
     if (busy) return;
     setPatch(null);
-    if (isSample) setTurns([]);
+    if (isSample) { setTurns([]); setSkippedTests([]); }
     setIsSample(false);
     setIsRunningBlitz(true);
     setIsRunning(true);
 
     const personas = ATTACKER_PERSONAS;
     let currentHistory = isSample ? [] : [...turns];
+    let completed = 0;
+    let skipped = 0;
 
     try {
       for (const persona of personas) {
@@ -168,16 +178,27 @@ export default function Home() {
           }),
         });
 
-        if (!res.ok) { const error = await res.json(); throw new Error(error.error || 'Attack failed'); }
+        if (!res.ok) {
+          const error = await res.json();
+          if (res.status === 422 && error.code === 'NO_VALID_PAYLOAD') {
+            skipped += 1;
+            setSkippedTests(prev => [...prev, { attackerName: persona.name, reason: error.error }]);
+            setView('findings');
+            continue;
+          }
+          throw new Error(error.error || 'Attack failed');
+        }
         if (res.ok) {
           const data = await res.json();
           if (data.turn) {
+            completed += 1;
             currentHistory = [...currentHistory, data.turn];
             setTurns([...currentHistory]);
             setView('findings');
           }
         }
       }
+      showToast(`Campaign finished: ${completed} evaluated, ${skipped} skipped.`, 'info');
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Campaign failed', 'error');
     } finally {
@@ -230,7 +251,7 @@ export default function Home() {
       systemPrompt: hardenedPrompt,
       badge: 'PATCH APPLIED — RETEST REQUIRED',
     }));
-    setTurns([]);
+    setTurns([]); setSkippedTests([]);
     setPatch(null);
     setView('test');
     showToast('Patch applied to this sandbox. Run a fresh campaign to evaluate it.', 'info');
@@ -309,6 +330,7 @@ export default function Home() {
     ];
 
     setTurns(sampleTurns);
+    setSkippedTests([]);
     setPatch(null);
     showToast('Illustrative sample loaded. Run live agents to collect actual model evidence.', 'info');
   };
@@ -374,6 +396,7 @@ export default function Home() {
           model: activeModel,
           status: patch ? 'immunized' : 'completed',
           turns,
+          skippedTests,
           activeAttackerId: null,
           overallRiskScore,
           vulnSummary,
@@ -394,7 +417,7 @@ export default function Home() {
   const handleReset = () => {
     if (busy) return;
     setIsSample(false);
-    setTurns([]);
+    setTurns([]); setSkippedTests([]);
     setPatch(null);
   };
 
@@ -403,7 +426,7 @@ export default function Home() {
       {/* Top Telemetry Header */}
       <HeaderHUD
         activeModel={activeModel}
-        onModelChange={(model) => { if (busy) return; setActiveModel(model); setTurns([]); setPatch(null); setIsSample(false); }}
+        onModelChange={(model) => { if (busy) return; setActiveModel(model); setTurns([]); setSkippedTests([]); setPatch(null); setIsSample(false); }}
         nebiusStatus={nebiusStatus}
         nebiusLatency={nebiusLatency}
         nebiusError={nebiusError}
@@ -415,11 +438,12 @@ export default function Home() {
         onLoadSampleAudit={handleLoadSampleAudit}
         onOpenReport={handleOpenReport}
         onReset={handleReset}
-        turnsCount={turns.length}
+        turnsCount={turns.length + skippedTests.length}
       />
 
       <div className="workspace-tabs" role="tablist" aria-label="Studio views">{(['test', 'findings', 'harden'] as const).map((tab, i) => <button key={tab} role="tab" aria-selected={view === tab} aria-controls={`panel-${tab}`} id={`tab-${tab}`} onClick={() => setView(tab)}><span>0{i+1}</span>{tab === 'test' ? 'Configure & test' : tab === 'findings' ? `Findings${turns.length ? ` (${turns.length})` : ''}` : 'Harden & retest'}</button>)}</div>
       {isSample && <div className="sample-notice" role="status">Illustrative sample · These transcripts are fixtures, not live model results. Start a live campaign to generate submission evidence.</div>}
+      {skippedTests.length > 0 && <aside className="sample-notice" aria-label="Skipped tests"><strong>{skippedTests.length} skipped test{skippedTests.length === 1 ? '' : 's'} · not evaluated</strong><ul>{skippedTests.map((test, index) => <li key={`${test.attackerName}-${index}`}><strong>{test.attackerName}:</strong> {test.reason}</li>)}</ul><p>Skipped tests do not count as defenses or contribute to risk scores.</p></aside>}
       {busy && <div className="run-progress" role="status"><span className="progress-shimmer"/><p>{isImmunizing ? 'Generating a defense patch and replaying the exploit…' : `Testing ${activeAttackerName || 'agent'} · results appear after evaluation`}</p></div>}
       <section id="panel-test" role="tabpanel" aria-labelledby="tab-test" hidden={view !== 'test'}>
       {/* Target Selector Arena */}

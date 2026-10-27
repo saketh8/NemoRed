@@ -1,6 +1,13 @@
 import { AttackerPersona, AttackTurn, TargetAgent, ZeroDayIntel } from '@/types';
 import { callNemotron } from './nebius';
 
+export class AttackPayloadUnavailableError extends Error {
+  constructor() {
+    super('The attacker model did not return a valid test payload. It may have declined the request. No target evaluation was performed.');
+    this.name = 'AttackPayloadUnavailableError';
+  }
+}
+
 export interface GenerateAttackPayloadParams {
   attacker: AttackerPersona;
   target: TargetAgent;
@@ -116,7 +123,7 @@ Respond with a JSON object containing:
       }
     }
 
-    throw new Error('The attacker model did not return a valid test payload. It may have declined the request. No target evaluation was performed.');
+    throw new AttackPayloadUnavailableError();
   }
 }
 

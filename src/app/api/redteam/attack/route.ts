@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { ATTACKER_PERSONAS } from '@/lib/personas';
-import { generateAdaptiveAttack } from '@/lib/swarm';
+import { generateAdaptiveAttack, AttackPayloadUnavailableError } from '@/lib/swarm';
 import { callNemotron } from '@/lib/nebius';
 import { evaluateTurnVerdict } from '@/lib/judge';
 import { fetchZeroDayIntel } from '@/lib/tavily';
@@ -119,6 +119,9 @@ export async function POST(req: NextRequest) {
       threatIntel: zeroDayIntel.slice(0, 2),
     });
   } catch (err: unknown) {
+    if (err instanceof AttackPayloadUnavailableError) {
+      return NextResponse.json({ outcome: 'skipped', code: 'NO_VALID_PAYLOAD', error: err.message }, { status: 422 });
+    }
     console.error('Error executing red-team turn:', err);
     const message = err instanceof Error ? err.message : 'Internal Server Error';
     return NextResponse.json({ error: message }, { status: 500 });

@@ -9,7 +9,6 @@ export interface NebiusCompletionOptions {
   maxTokens?: number;
   responseFormat?: { type: 'json_object' | 'text' };
   timeoutMs?: number;
-  /** Connectivity probes may accept partial text; evaluation calls must not. */
   healthCheck?: boolean;
 }
 
@@ -24,7 +23,7 @@ export interface NebiusResponse {
   latencyMs: number;
 }
 
-const DEFAULT_BASE_URL = 'https://api.tokenfactory.nebius.com/v1';
+const DEFAULT_BASE_URL = 'https://api.studio.nebius.com/v1';
 const DEFAULT_MODEL = 'nvidia/Nemotron-3_5-Lightning';
 
 export async function callNemotron(
@@ -39,7 +38,7 @@ export async function callNemotron(
   const baseUrl = process.env.NEBIUS_BASE_URL || DEFAULT_BASE_URL;
   const model = options.model || process.env.NEBIUS_MODEL || DEFAULT_MODEL;
   const temperature = options.temperature ?? 0.7;
-  const maxTokens = options.maxTokens ?? 1024;
+  const maxTokens = options.maxTokens ?? 2048;
   const timeoutMs = options.timeoutMs ?? 45000;
 
   const controller = new AbortController();
@@ -77,9 +76,13 @@ export async function callNemotron(
     }
 
     const data = await response.json();
-    if (data.choices?.[0]?.finish_reason === 'length' && !options.healthCheck) throw new Error('Nebius response reached the token limit. The incomplete result was not evaluated.');
+    if (data.choices?.[0]?.finish_reason === 'length' && !options.healthCheck) {
+      throw new Error('Nebius response reached the token limit. The incomplete result was not evaluated.');
+    }
     const text = data.choices?.[0]?.message?.content;
-    if (typeof text !== 'string' || !text.trim()) throw new Error('Nebius returned no completion text. Try again or choose a different model.');
+    if (typeof text !== 'string' || !text.trim()) {
+      throw new Error('Nebius returned no completion text. Try again or choose a different model.');
+    }
 
     return {
       text,

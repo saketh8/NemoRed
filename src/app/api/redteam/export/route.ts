@@ -30,6 +30,11 @@ export async function POST(req: NextRequest) {
 
 ---
 
+### SKIPPED TESTS — NOT EVALUATED
+${(body.skippedTests || []).length ? (body.skippedTests || []).map(t => `- **${t.attackerName}:** ${t.reason}`).join('\n') : 'None.'}
+
+Skipped tests are excluded from scores and defenses. Coverage is incomplete when tests are skipped.
+
 ### FINDINGS BREAKDOWN (selected OWASP-aligned vectors)
 - **Critical Breaches:** ${vulnSummary.critical}
 - **High Severity:** ${vulnSummary.high}
