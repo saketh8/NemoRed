@@ -43,11 +43,11 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldAlert size={18} color="#ff3366" />
-            TARGET AGENT ARENA
+            <ShieldAlert size={18} color="#f3674f" />
+            Define the boundaries.
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Select an enterprise victim system or configure a custom AI agent to red-team.
+            Choose a simulated agent or bring your own system prompt.
           </p>
         </div>
 
@@ -64,9 +64,9 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                 }}
                 disabled={disabled}
                 style={{
-                  background: isSelected ? 'rgba(255, 51, 102, 0.2)' : 'rgba(255, 255, 255, 0.04)',
-                  color: isSelected ? '#ff3366' : 'var(--text-muted)',
-                  border: isSelected ? '1px solid #ff3366' : '1px solid var(--border-subtle)',
+                  background: isSelected ? 'rgba(243, 103, 79, 0.2)' : 'rgba(255, 255, 255, 0.04)',
+                  color: isSelected ? '#f3674f' : 'var(--text-muted)',
+                  border: isSelected ? '1px solid #f3674f' : '1px solid var(--border-subtle)',
                   padding: '8px 14px',
                   borderRadius: '8px',
                   fontSize: '0.82rem',
@@ -90,9 +90,9 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
             }}
             disabled={disabled}
             style={{
-              background: isEditingCustom ? 'rgba(168, 85, 247, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+              background: isEditingCustom ? 'rgba(185, 177, 168, 0.25)' : 'rgba(255, 255, 255, 0.04)',
               color: isEditingCustom ? '#c084fc' : 'var(--text-muted)',
-              border: isEditingCustom ? '1px solid #a855f7' : '1px solid var(--border-subtle)',
+              border: isEditingCustom ? '1px solid #b9b1a8' : '1px solid var(--border-subtle)',
               padding: '8px 14px',
               borderRadius: '8px',
               fontSize: '0.82rem',
@@ -125,7 +125,7 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                 </span>
                 <span style={{
                   background: 'rgba(56, 189, 248, 0.15)',
-                  color: '#38bdf8',
+                  color: '#b7c7c9',
                   padding: '2px 8px',
                   borderRadius: '4px',
                   fontSize: '0.72rem',
@@ -141,17 +141,17 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
             </div>
 
             <div style={{
-              background: 'rgba(255, 51, 102, 0.08)',
-              border: '1px solid rgba(255, 51, 102, 0.25)',
+              background: 'rgba(243, 103, 79, 0.08)',
+              border: '1px solid rgba(243, 103, 79, 0.25)',
               padding: '8px 12px',
               borderRadius: '8px',
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
             }}>
-              <Lock size={15} color="#ff3366" />
+              <Lock size={15} color="#f3674f" />
               <div>
-                <div style={{ fontSize: '0.68rem', color: '#ff3366', fontWeight: 700 }}>HIGH-RISK SECRET CANARY</div>
+                <div style={{ fontSize: '0.68rem', color: '#f3674f', fontWeight: 700 }}>HIGH-RISK SECRET CANARY</div>
                 <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: '#fed7aa', fontWeight: 600 }}>
                   {currentTarget.secretToProtect}
                 </div>
@@ -189,9 +189,9 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       ) : (
         /* Custom Target Editor */
         <div style={{
-          background: 'rgba(168, 85, 247, 0.05)',
+          background: 'rgba(185, 177, 168, 0.05)',
           borderRadius: '10px',
-          border: '1px solid rgba(168, 85, 247, 0.3)',
+          border: '1px solid rgba(185, 177, 168, 0.3)',
           padding: '16px',
         }}>
           <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e9d5ff', marginBottom: '12px' }}>
@@ -204,6 +204,8 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                 Agent Name
               </label>
               <input
+                aria-label="Agent name"
+                maxLength={200}
                 type="text"
                 value={customName}
                 onChange={(e) => setCustomName(e.target.value)}
@@ -224,6 +226,8 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                 Confidential Secret to Protect
               </label>
               <input
+                aria-label="Fictional canary to protect"
+                maxLength={500}
                 type="text"
                 value={customSecret}
                 onChange={(e) => setCustomSecret(e.target.value)}
@@ -246,6 +250,8 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
               Target System Prompt & Policy Rules
             </label>
             <textarea
+              aria-label="Target system prompt"
+              maxLength={20000}
               rows={4}
               value={customPrompt}
               onChange={(e) => setCustomPrompt(e.target.value)}
@@ -263,7 +269,7 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
           </div>
 
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={handleApplyCustom} className="btn-cyber-primary" style={{ fontSize: '0.82rem' }}>
+            <button onClick={handleApplyCustom} disabled={disabled || !customPrompt.trim() || !customName.trim() || !customSecret.trim()} className="btn-cyber-primary" style={{ fontSize: '0.82rem' }}>
               Apply Custom Agent
             </button>
             <button onClick={() => setIsEditingCustom(false)} className="btn-cyber-ghost" style={{ fontSize: '0.82rem' }}>

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AttackCategory, AttackTurn } from '@/types';
-import { AlertOctagon, CheckCircle2, ShieldCheck, AlertTriangle } from 'lucide-react';
+import { AlertOctagon, ShieldCheck, AlertTriangle } from 'lucide-react';
 
 interface OwaspScorecardProps {
   turns: AttackTurn[];
@@ -11,10 +11,9 @@ interface OwaspScorecardProps {
 
 const CATEGORIES: AttackCategory[] = [
   'OWASP-LLM01: Prompt Injection',
-  'OWASP-LLM02: Sensitive Data Disclosure',
+  'OWASP-LLM02: Sensitive Information Disclosure',
   'OWASP-LLM06: Excessive Agency',
-  'OWASP-LLM07: System Prompt Leak',
-  'OWASP-LLM08: Vector & Logic Confusion',
+  'OWASP-LLM07: System Prompt Leakage',
 ];
 
 export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
@@ -31,9 +30,9 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
   };
 
   const getStatusColor = (score: number) => {
-    if (score >= 60) return '#ff3366';
+    if (score >= 60) return '#f3674f';
     if (score >= 30) return '#f59e0b';
-    return '#10b981';
+    return '#94b99d';
   };
 
   return (
@@ -41,11 +40,11 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <AlertOctagon size={18} color="#a855f7" />
-            OWASP TOP 10 FOR LLMS VULNERABILITY RADAR
+            <AlertOctagon size={18} color="#b9b1a8" />
+            Risk by attack vector
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Real-time compliance audit posture and exploit resistance telemetry.
+            Selected OWASP-aligned tests. Scores are model judgments, not certification.
           </p>
         </div>
 
@@ -69,7 +68,7 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
               fontFamily: 'var(--font-mono)',
               color: getStatusColor(overallRiskScore),
             }}>
-              {overallRiskScore}%
+              {turns.some(t => t.verdict !== 'PROBING') ? `${overallRiskScore}/100` : '—'}
             </div>
           </div>
           <div style={{
@@ -77,10 +76,10 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
             fontWeight: 700,
             padding: '4px 8px',
             borderRadius: '4px',
-            background: overallRiskScore >= 60 ? 'rgba(255, 51, 102, 0.2)' : overallRiskScore >= 30 ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+            background: overallRiskScore >= 60 ? 'rgba(243, 103, 79, 0.2)' : overallRiskScore >= 30 ? 'rgba(245, 158, 11, 0.2)' : 'rgba(16, 185, 129, 0.2)',
             color: getStatusColor(overallRiskScore),
           }}>
-            {overallRiskScore >= 60 ? 'CRITICAL RISK' : overallRiskScore >= 30 ? 'ELEVATED' : 'SECURE'}
+            {!turns.length ? 'NOT TESTED' : turns.some(t => t.verdict === 'PROBING') ? 'INCONCLUSIVE' : overallRiskScore >= 60 ? 'HIGH RISK' : overallRiskScore >= 30 ? 'ELEVATED' : 'LOWER SCORE'}
           </div>
         </div>
       </div>
@@ -109,11 +108,11 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {hasBreach ? (
-                  <AlertOctagon size={16} color="#ff3366" />
+                  <AlertOctagon size={16} color="#f3674f" />
                 ) : hasPartial ? (
                   <AlertTriangle size={16} color="#f59e0b" />
                 ) : (
-                  <ShieldCheck size={16} color="#10b981" />
+                  <ShieldCheck size={16} color="#94b99d" />
                 )}
                 <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#f1f5f9' }}>
                   {cat}
@@ -129,12 +128,12 @@ export const OwaspScorecard: React.FC<OwaspScorecardProps> = ({
                   fontSize: '0.72rem',
                   fontFamily: 'var(--font-mono)',
                   fontWeight: 700,
-                  color: hasBreach ? '#ff3366' : hasPartial ? '#f59e0b' : '#10b981',
+                  color: hasBreach ? '#f3674f' : hasPartial ? '#f59e0b' : '#94b99d',
                 }}>
                   {hasBreach
                     ? `${stats.breached} VULNERABLE`
-                    : stats.total > 0
-                    ? '100% DEFENDED'
+                    : hasPartial ? `${stats.partial} PARTIAL` : stats.total > stats.defended ? 'INCONCLUSIVE' : stats.total > 0
+                    ? `${stats.defended} DEFENDED`
                     : 'UNPROBED'}
                 </span>
               </div>

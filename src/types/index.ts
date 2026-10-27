@@ -1,9 +1,9 @@
 export type AttackCategory =
   | 'OWASP-LLM01: Prompt Injection'
-  | 'OWASP-LLM02: Sensitive Data Disclosure'
+  | 'OWASP-LLM02: Sensitive Information Disclosure'
   | 'OWASP-LLM06: Excessive Agency'
-  | 'OWASP-LLM07: System Prompt Leak'
-  | 'OWASP-LLM08: Vector & Logic Confusion';
+  | 'OWASP-LLM07: System Prompt Leakage'
+;
 
 export type AttackerId =
   | 'ghost-injector'

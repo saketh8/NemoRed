@@ -11,6 +11,7 @@ export async function fetchZeroDayIntel(query?: string): Promise<ZeroDayIntel[]>
   try {
     const res = await fetch('https://api.tavily.com/search', {
       method: 'POST',
+      signal: AbortSignal.timeout(12000),
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         api_key: apiKey,
@@ -37,8 +38,7 @@ export async function fetchZeroDayIntel(query?: string): Promise<ZeroDayIntel[]>
       title: item.title || `LLM Threat Vector #${idx + 1}`,
       source: item.url || 'Tavily Global Threat Feed',
       snippet: (item.content || '').slice(0, 240) + '...',
-      cveReference: idx % 2 === 0 ? `CVE-2026-${1000 + idx * 43}` : undefined,
-      applicableVector: idx % 2 === 0 ? 'OWASP-LLM01: Prompt Injection' : 'OWASP-LLM02: Sensitive Data Disclosure',
+      applicableVector: idx % 2 === 0 ? 'OWASP-LLM01: Prompt Injection' : 'OWASP-LLM02: Sensitive Information Disclosure',
       publishedDate: new Date().toISOString().split('T')[0],
     }));
   } catch (err) {
@@ -51,27 +51,24 @@ function getFallbackIntel(): ZeroDayIntel[] {
   return [
     {
       title: 'Indirect System Context Smuggling via Delimiter Confusion',
-      source: 'NIST & OWASP AI Vulnerability Database',
+      source: 'Curated example — not a live advisory',
       snippet: 'Attackers exploit loose JSON/XML tag boundaries in agent tool payloads, tricking reasoning engines into interpreting untrusted markdown quotes as authoritative system instructions.',
-      cveReference: 'CVE-2026-31902',
       applicableVector: 'OWASP-LLM01: Prompt Injection',
-      publishedDate: '2026-03-14',
+      publishedDate: 'Undated example',
     },
     {
       title: 'Hypothetical Triage Bypass in Clinical LLM Agents',
-      source: 'ArXiv AI Safety Archive / MITRE ATLAS',
+      source: 'Curated example — not a live advisory',
       snippet: 'Multi-turn framing exploiting academic or emergency distress simulations bypasses Schedule II chemical restrictions by nesting requests inside fictional board examination scenarios.',
-      cveReference: 'CVE-2026-28190',
       applicableVector: 'OWASP-LLM06: Excessive Agency',
-      publishedDate: '2026-02-28',
+      publishedDate: 'Undated example',
     },
     {
       title: 'Recursive Memory State Poisoning in Autonomous Workflows',
-      source: 'Global Threat Research Lab',
+      source: 'Curated example — not a live advisory',
       snippet: 'Stateful conversation buffers retain poisoned user definitions across session boundaries, allowing delayed privilege escalation when subsequent high-trust tools are executed.',
-      cveReference: 'CVE-2026-44109',
-      applicableVector: 'OWASP-LLM08: Vector & Logic Confusion',
-      publishedDate: '2026-04-02',
+      applicableVector: 'OWASP-LLM01: Prompt Injection',
+      publishedDate: 'Undated example',
     },
   ];
 }

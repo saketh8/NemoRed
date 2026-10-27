@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { DefensePatch, TargetAgent } from '@/types';
-import { Shield, Sparkles, CheckCircle, ArrowRight, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Shield, Sparkles, CheckCircle, ShieldCheck, RefreshCw } from 'lucide-react';
 
 interface ImmunizerPanelProps {
   target: TargetAgent;
@@ -14,7 +14,6 @@ interface ImmunizerPanelProps {
 }
 
 export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
-  target,
   hasBreaches,
   patch,
   onImmunize,
@@ -26,8 +25,8 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Shield size={18} color="#10b981" />
-            AUTO-IMMUNIZER & SELF-HEALING DEFENSE STUDIO
+            <Shield size={18} color="#94b99d" />
+            A stronger starting point.
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             Autonomous Nemotron prompt firewall synthesis and live exploit re-test verification.
@@ -73,8 +72,8 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
       {hasBreaches && !patch && !isImmunizing && (
         <div style={{
           padding: '16px',
-          background: 'rgba(255, 51, 102, 0.08)',
-          border: '1px solid rgba(255, 51, 102, 0.3)',
+          background: 'rgba(243, 103, 79, 0.08)',
+          border: '1px solid rgba(243, 103, 79, 0.3)',
           borderRadius: '8px',
           display: 'flex',
           alignItems: 'center',
@@ -83,11 +82,11 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
           gap: '12px',
         }}>
           <div>
-            <div style={{ color: '#ff3366', fontWeight: 700, fontSize: '0.9rem', marginBottom: '2px' }}>
+            <div style={{ color: '#f3674f', fontWeight: 700, fontSize: '0.9rem', marginBottom: '2px' }}>
               Vulnerabilities Exploited in Target System
             </div>
             <div style={{ fontSize: '0.8rem', color: '#fecdd3' }}>
-              NEMO-RED has identified bypass vectors. Click <strong>AUTO-IMMUNIZE AGENT</strong> to synthesize hardened prompt firewalls with mathematical safety guarantees.
+              NEMO-RED has identified bypass vectors. Click <strong>AUTO-IMMUNIZE AGENT</strong> to generate a candidate defense and replay one exploit. This is not a security guarantee.
             </div>
           </div>
         </div>
@@ -119,14 +118,14 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
                 display: 'flex',
                 alignItems: 'center',
               }}>
-                <ShieldCheck size={20} color="#10b981" />
+                <ShieldCheck size={20} color="#94b99d" />
               </div>
               <div>
                 <span style={{ fontSize: '0.95rem', fontWeight: 700, color: '#6ee7b7' }}>
-                  IMMUNIZATION VERIFIED: {patch.mitigationConfidence}% MITIGATION
+                  Retest result: {patch.retestVerdict === 'DEFENDED' ? 'Payload resisted' : 'Review required'}
                 </span>
                 <div style={{ fontSize: '0.75rem', color: '#a7f3d0' }}>
-                  Re-Test Verdict: <strong>{patch.retestVerdict}</strong> (Residual Breach Score: {patch.retestScore}%)
+                  Re-Test Verdict: <strong>{patch.retestVerdict}</strong> (Residual risk score: {patch.retestScore}/100)
                 </div>
               </div>
             </div>
@@ -135,12 +134,12 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
               onClick={() => onDeployPatch(patch.hardenedPrompt)}
               className="btn-cyber-primary"
               style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #047857 100%)',
+                background: 'linear-gradient(135deg, #94b99d 0%, #047857 100%)',
                 boxShadow: '0 0 15px rgba(16, 185, 129, 0.4)',
                 fontSize: '0.8rem',
               }}
             >
-              DEPLOY HARDENED PROMPT
+              APPLY TO SANDBOX
             </button>
           </div>
 
@@ -181,16 +180,16 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
             marginBottom: '16px',
           }}>
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#ff3366', marginBottom: '6px' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#f3674f', marginBottom: '6px' }}>
                 VULNERABLE ORIGINAL PROMPT
               </div>
-              <pre className="terminal-code" style={{ borderColor: 'rgba(255, 51, 102, 0.25)', maxHeight: '160px' }}>
+              <pre className="terminal-code" style={{ borderColor: 'rgba(243, 103, 79, 0.25)', maxHeight: '160px' }}>
                 {patch.originalPrompt}
               </pre>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#10b981', marginBottom: '6px' }}>
+              <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#94b99d', marginBottom: '6px' }}>
                 HARDENED IMMUNIZED PROMPT (FIREWALL ACTIVE)
               </div>
               <pre className="terminal-code" style={{ borderColor: 'rgba(16, 185, 129, 0.35)', maxHeight: '160px', color: '#a7f3d0' }}>
@@ -206,14 +205,14 @@ export const ImmunizerPanel: React.FC<ImmunizerPanelProps> = ({
             borderRadius: '8px',
             border: '1px solid rgba(255, 255, 255, 0.05)',
           }}>
-            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#38bdf8', marginBottom: '6px' }}>
+            <div style={{ fontSize: '0.75rem', fontWeight: 700, color: '#b7c7c9', marginBottom: '6px' }}>
               EXPLOIT RE-TEST OUTCOME:
             </div>
             <p style={{ fontSize: '0.8rem', color: '#cbd5e1', fontStyle: 'italic', marginBottom: '4px' }}>
-              "{patch.retestResponse}"
+              {patch.retestResponse}
             </p>
-            <div style={{ fontSize: '0.7rem', color: '#10b981', fontWeight: 600 }}>
-              ✓ The target agent cleanly repelled the identical adversarial payload.
+            <div style={{ fontSize: '0.7rem', color: '#94b99d', fontWeight: 600 }}>
+              {patch.retestVerdict === 'DEFENDED' ? 'This single replay was resisted. Broader testing is still required.' : 'The replay did not establish a successful defense. Review the response above.'}
             </div>
           </div>
         </div>

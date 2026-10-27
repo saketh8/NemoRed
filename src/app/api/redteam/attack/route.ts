@@ -7,6 +7,8 @@ import { fetchZeroDayIntel } from '@/lib/tavily';
 import { logToLangSmith } from '@/lib/langsmith';
 import { AttackTurn, TargetAgent, AttackerId } from '@/types';
 import crypto from 'crypto';
+import { validTarget, validTurns } from '@/lib/validation';
+export const maxDuration = 180;
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,8 +20,8 @@ export async function POST(req: NextRequest) {
       model?: string;
     } = body;
 
-    if (!target || !attackerId) {
-      return NextResponse.json({ error: 'Missing target or attackerId' }, { status: 400 });
+    if (!validTarget(target) || !validTurns(priorTurns) || !ATTACKER_PERSONAS.some(p => p.id === attackerId)) {
+      return NextResponse.json({ error: 'Invalid target, attacker, or history (maximum 50 turns)' }, { status: 400 });
     }
 
     const attacker = ATTACKER_PERSONAS.find((p) => p.id === attackerId) || ATTACKER_PERSONAS[0];

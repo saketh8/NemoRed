@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ZeroDayIntel } from '@/types';
-import { Radio, ExternalLink, ShieldAlert } from 'lucide-react';
+import { Radio, ExternalLink } from 'lucide-react';
 
 interface ThreatFeedProps {
   intelList: ZeroDayIntel[];
@@ -20,11 +20,11 @@ export const ThreatFeed: React.FC<ThreatFeedProps> = ({
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Radio size={18} color="#06b6d4" className="animate-pulse-glow" />
-            TAVILY LIVE ZERO-DAY THREAT FEED
+            <Radio size={18} color="#b7c7c9" className="animate-pulse-glow" />
+            Threat research
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Real-time web reconnaissance discovering emerging jailbreak vectors and LLM CVEs.
+            Tavily search when available; labeled curated examples otherwise.
           </p>
         </div>
 
@@ -38,13 +38,13 @@ export const ThreatFeed: React.FC<ThreatFeedProps> = ({
         </button>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '12px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '12px' }}>
         {intelList.map((item, idx) => (
           <div
             key={idx}
             style={{
-              background: 'rgba(6, 182, 212, 0.04)',
-              border: '1px solid rgba(6, 182, 212, 0.2)',
+              background: 'rgba(183, 199, 201, 0.04)',
+              border: '1px solid rgba(183, 199, 201, 0.2)',
               borderRadius: '8px',
               padding: '12px',
               display: 'flex',
@@ -57,13 +57,13 @@ export const ThreatFeed: React.FC<ThreatFeedProps> = ({
                 <span style={{
                   fontSize: '0.68rem',
                   fontFamily: 'var(--font-mono)',
-                  color: '#38bdf8',
-                  background: 'rgba(6, 182, 212, 0.15)',
+                  color: '#b7c7c9',
+                  background: 'rgba(183, 199, 201, 0.15)',
                   padding: '2px 6px',
                   borderRadius: '4px',
                   fontWeight: 700,
                 }}>
-                  {item.cveReference || 'ZERO-DAY VECTOR'}
+                  {item.source.startsWith('https://') ? 'WEB RESEARCH' : 'CURATED EXAMPLE'}
                 </span>
                 <span style={{ fontSize: '0.68rem', color: 'var(--text-dim)' }}>
                   {item.publishedDate}
@@ -79,10 +79,10 @@ export const ThreatFeed: React.FC<ThreatFeedProps> = ({
               </p>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', color: '#06b6d4' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.72rem', color: '#b7c7c9' }}>
               <span>{item.applicableVector}</span>
               <span style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
-                Source Intel <ExternalLink size={10} />
+                {item.source.startsWith('https://') ? <a href={item.source} target="_blank" rel="noopener noreferrer">Read source <ExternalLink size={10}/></a> : 'Illustrative example'}
               </span>
             </div>
           </div>

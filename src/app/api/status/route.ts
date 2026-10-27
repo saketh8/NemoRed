@@ -9,7 +9,7 @@ export async function GET() {
   const hasLangSmithKey = Boolean(process.env.LANGSMITH_API_KEY);
 
   let nebiusLatencyMs = 0;
-  let nebiusStatus: 'connected' | 'error' = 'connected';
+  let nebiusStatus: 'connected' | 'error' = hasNebiusKey ? 'connected' : 'error';
   let activeModel = process.env.NEBIUS_MODEL || 'nvidia/Nemotron-3_5-Lightning';
 
   if (hasNebiusKey) {
@@ -19,7 +19,7 @@ export async function GET() {
           { role: 'system', content: 'You are a health probe. Answer in 1 word.' },
           { role: 'user', content: 'Ping' },
         ],
-        { maxTokens: 8 }
+        { maxTokens: 64, timeoutMs: 12000 }
       );
       nebiusLatencyMs = probe.latencyMs;
       activeModel = probe.model;

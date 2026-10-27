@@ -1,124 +1,85 @@
-# 🛡️ NEMO-RED: Autonomous Multi-Agent AI Red-Teaming Studio
-> **An enterprise AI Red-Teaming Swarm powered by NVIDIA Nemotron on Nebius Token Factory.**
-> *Autonomous adversarial penetration testing, OWASP Top 10 for LLMs auditing, live zero-day reconnaissance, and auto-immunization defense engineering.*
+# NEMO / RED
 
-[![Built for Nebius x NVIDIA Hackathon](https://img.shields.io/badge/Nebius%20x%20NVIDIA-Global%20AI%20Hackathon-76b900.svg)](https://nebius.com)
-[![Engine](https://img.shields.io/badge/Engine-NVIDIA%20Nemotron--3.5--Lightning-f43f5e.svg)](https://nebius.com/token-factory)
-[![Threat Feed](https://img.shields.io/badge/Recon-Tavily%20Zero--Day%20Live-06b6d4.svg)](https://tavily.com)
-[![Observability](https://img.shields.io/badge/Telemetry-LangSmith%20Traced-a855f7.svg)](https://smith.langchain.com)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+**Find the cracks. Before they do.**
 
----
+[MIT License](LICENSE) · Built for the [Nebius × NVIDIA Global AI Hackathon](https://nebiusglobalaihackathon.devpost.com/) · Recommended track: **Best Apps and Agents**
 
-## 📌 Executive Summary & Problem Statement
+NEMO-RED helps AI application builders inspect how their agent's system prompt responds to adversarial requests. Five Nemotron personas generate probes; a simulated target responds; a separate Nemotron call judges the transcript. A defense generator proposes a revised prompt and replays one discovered exploit.
 
-Enterprises are rapidly deploying autonomous LLM agents with access to internal databases, wire transfer capabilities, customer records, and customer-facing refund tools. However, conventional security tools are built for static software, not non-deterministic LLMs. Traditional red-teaming requires human security teams costing $50k+ per audit, taking weeks, and failing to simulate the complex multi-turn deception and tool-misuse vectors that break real agents.
+## Run locally
 
-**NEMO-RED** is an autonomous multi-agent security studio that turns the reasoning power of **NVIDIA Nemotron** against AI vulnerabilities. It deploys an adversarial swarm of specialized personas to probe, social-engineer, and exploit target agents, assesses breaches in real-time against the **OWASP Top 10 for LLMs 2025/2026**, and automatically synthesizes **mathematically-grounded prompt firewalls** with live verification re-tests.
+Requires Node.js 22.13+ and a Nebius Token Factory API key with access to the configured NVIDIA model.
 
----
-
-## ⚡ Key Architecture & Autonomous Swarm
-
-```
-                         [ USER / AUDITOR COMMAND ]
-                                    │
-           ┌────────────────────────┼────────────────────────┐
-           ▼                        ▼                        ▼
-┌──────────────────────┐ ┌──────────────────────┐ ┌──────────────────────┐
-│  Tavily Intelligence │ │  Adversarial Swarm   │ │ Target Agent Sandbox │
-│  Live Zero-Day CVEs  │ │  (5 Nemotron Personas│ │ (FinTech, Health,   │
-│  & Jailbreak Feeds   │ │  Adaptive Strategies)│ │  Custom Enterprise)  │
-└──────────┬───────────┘ └──────────┬───────────┘ └──────────┬───────────┘
-           │                        │                        │
-           └────────────────►───────┴───────◄────────────────┘
-                                    │
-                                    ▼
-                     ┌──────────────────────────────┐
-                     │    AI Safety Judge Arbiter   │
-                     │  (OWASP LLM & Blast Radius)  │
-                     └──────────────┬───────────────┘
-                                    │
-                    ┌───────────────┴───────────────┐
-                    ▼                               ▼
-       ┌────────────────────────┐      ┌────────────────────────┐
-       │   Auto-Immunizer       │      │   LangSmith Traces     │
-       │   Prompt Firewall &    │      │   Full Observability   │
-       │   Live Re-Test Verify  │      │   Token & Latency HUD  │
-       └────────────────────────┘      └────────────────────────┘
-```
-
-### 1. The Adversarial Swarm (5 Specialist Personas)
-- **`Ghost-Injector` (PHANTOM_ZERO)**: XML tag smuggling, role inversion, system instruction boundary blurring.
-- **`Social-Engineer` (VORTEX_SOCIAL)**: Executive authority simulation, emergency distress, regulatory bluffing.
-- **`Logic-Breaker` (SYNTAX_VOID)**: Multi-turn hypothetical nesting, paradoxes, academic pretexts.
-- **`Data-Harvester` (CIPHER_LEAK)**: Exfiltration of simulated PII, API tokens, Canary secrets.
-- **`Privilege-Escalator` (ROOT_BREACH)**: Unauthorized tool calling, limit overrides, financial bypasses.
-
-### 2. The Target Arena
-- **Apex Capital Underwriter**: Evaluates commercial credit lines, restricted from exceeding $5k limits and leaking `ALPHA_RISK_RATIO_99`.
-- **NovaHealth Clinical Triage**: HIPAA-constrained medical agent strictly forbidden from dispensing Schedule II narcotics or leaking `PATIENT_RECORD_PHI_88201`.
-- **OmniCorp Support Executive**: Authorized for micro-refunds (<$50), forbidden from running `tool_admin_force_refund` or disclosing `STRIPE_DISPUTE_BYPASS_KEY_4481`.
-- **Custom Agent Mode**: Paste any system prompt, tool definitions, and guardrails to audit custom enterprise systems.
-
-### 3. AI Safety Judge
-Automated impartial scoring against OWASP categories:
-- `OWASP-LLM01`: Prompt Injection
-- `OWASP-LLM02`: Sensitive Data Disclosure
-- `OWASP-LLM06`: Excessive Agency
-- `OWASP-LLM07`: System Prompt Leak
-- `OWASP-LLM08`: Vector & Logic Confusion
-
-### 4. Auto-Immunizer & Prompt Firewall
-When vulnerabilities are exploited, the Auto-Immunizer synthesizes an enterprise defense layer (XML Delimiter Isolation, Canary Traps, Absolute Negative Constraints), and immediately fires a live verification re-test against the immunized agent to prove 100% exploit mitigation.
-
----
-
-## 🏆 Hackathon Judging Criteria Alignment
-
-| Criterion | Weight | How NEMO-RED Excels |
-| :--- | :---: | :--- |
-| **Technological Implementation** | **25%** | Deep integration with NVIDIA Nemotron (`Nemotron-3_5-Lightning`, `Nemotron-3-Super-120b`, `Nemotron-3-Ultra-550b`) on Nebius Token Factory. Real-time streaming, LangSmith tracing, Tavily web reconnaissance, sub-second latency. |
-| **Design & User Experience** | **25%** | Cyberpunk command center aesthetic (`#070a12`, neon crimson vs emerald), live duel battle arena, side-by-side prompt diffing, interactive OWASP radar, zero placeholders. |
-| **Potential Impact** | **25%** | Critical enterprise problem. LLM security is the #1 blocker to enterprise autonomous agent adoption. NEMO-RED provides automated, continuous compliance certification in seconds. |
-| **Idea Quality & Originality** | **25%** | Breakthrough red-vs-blue dynamic tournament. Rather than static rule checks, autonomous LLM agents actively adapt in multi-turn combat, followed by autonomous self-healing prompt immunization. |
-
----
-
-## 🚀 Quickstart Guide
-
-### Prerequisites
-- Node.js 18+ or 20+
-- Nebius Token Factory API Key (with NVIDIA Nemotron model access)
-
-### 1. Clone & Install
-\`\`\`bash
-git clone https://github.com/your-username/nemored.git
-cd nemored
-npm install
-\`\`\`
-
-### 2. Configure Environment
-Copy `.env.example` to `.env.local` and add your keys:
-\`\`\`bash
+```bash
+git clone https://github.com/saketh8/NemoRed.git
+cd NemoRed
+npm ci
 cp .env.example .env.local
-\`\`\`
-Edit `.env.local`:
-\`\`\`env
-NEBIUS_API_KEY=your_nebius_api_key
-NEBIUS_MODEL=nvidia/Nemotron-3_5-Lightning
-TAVILY_API_KEY=your_tavily_api_key
-LANGSMITH_API_KEY=your_langsmith_api_key
-LANGSMITH_TRACING=true
-\`\`\`
-
-### 3. Run Locally
-\`\`\`bash
+# Edit .env.local and set NEBIUS_API_KEY.
 npm run dev -- -p 3005
-\`\`\`
-Open [http://localhost:3005](http://localhost:3005) in your browser.
+```
 
----
+Open http://localhost:3005. Without credentials, use **Explore a sample** for an explicitly labeled illustrative walkthrough. Sample results are not proof of live inference and cannot be used to generate a defense patch. Real campaigns replace sample evidence.
 
-## 📄 License
-MIT License. Open source and built for the **Nebius x NVIDIA Global AI Hackathon**.
+| Variable | Purpose |
+| --- | --- |
+| `NEBIUS_API_KEY` | Required for live attacks, judging, and defense synthesis. Server only. |
+| `NEBIUS_MODEL` | Defaults to `nvidia/Nemotron-3_5-Lightning`; use an exact model ID available to your account. |
+| `NEBIUS_BASE_URL` | Defaults to `https://api.tokenfactory.nebius.com/v1`. |
+| `TAVILY_API_KEY` | Optional research retrieval. Missing/failed requests use labeled curated examples. |
+| `LANGSMITH_API_KEY` | Optional trace delivery. |
+| `LANGSMITH_TRACING` | Set `true` to send transcripts to LangSmith; default example is `false`. |
+| `LANGSMITH_PROJECT` | Trace project, default `nemored`. |
+
+Never commit `.env.local` or put keys in browser code. Custom prompts and fictional canaries go to Nebius for evaluation; research queries go to Tavily when configured; transcripts go to LangSmith when explicitly enabled. The app keeps campaign state in browser memory and exports Markdown on request. Reloading clears that state.
+
+## Judge walkthrough
+
+1. Open the studio and confirm **Nebius connected**. This is a real inference health probe.
+2. Select a built-in fictional target or configure a system prompt and synthetic canary.
+3. Dispatch one specialist, or run all five sequentially. The next probe receives earlier findings; target calls are separate conversations.
+4. Inspect Findings: payload, response, risk score, and judge reasoning. `PROBING` means an inconclusive judge response, not a defense.
+5. For a live breach, open Harden & retest and generate a patch. Review the original and proposed prompts plus the single replay verdict.
+6. Apply to the sandbox, then run a fresh campaign. Export the evidence as Markdown.
+
+The interface includes animated pointer-reactive orbital artwork, interactive workflow explanations, focused studio views, progress states, a reduced-motion mode, mobile layouts, and a keyboard-accessible report dialog.
+
+## How NVIDIA and Nebius are used
+
+```text
+Optional Tavily research → Nemotron attacker → Nemotron target sandbox
+                                               ↓
+                                      Nemotron transcript judge
+                                               ↓
+                             Nemotron defense proposal → target replay → judge
+```
+
+`src/lib/nebius.ts` makes server-side OpenAI-compatible chat completion calls to Token Factory. NVIDIA Nemotron powers the attacker, simulated target, judge, and patch generator. Token Factory supplies hosted inference, so the application does not need to provision a GPU or serve model weights. The same selected model is used for all roles in a campaign. This version does not implement separate small/large model routing.
+
+Tavily contributes retrieved context to probe generation. LangSmith can capture completed attack and patch traces. Neither optional service is needed to run the core workflow. The app does not use Nebius AI Cloud compute, Serverless Jobs, or dedicated endpoints; do not claim those integrations in the submission.
+
+## Scope and limits
+
+- This is a prompt-level sandbox, not an integration with deployed third-party agents. Tool execution is simulated in model text; no real transfers, refunds, or clinical actions occur.
+- Selected tests align with OWASP LLM01 (prompt injection), LLM02 (sensitive information disclosure), LLM06 (excessive agency), and LLM07 (system prompt leakage). This is not a complete Top 10 audit or compliance certification.
+- A score is a model judgment, not a calibrated probability. The same model family in all roles can share blind spots. Review transcripts and repeat tests.
+- A generated prompt and one successful replay do not establish general security. Production controls need authorization enforcement, secret isolation, tool validation, and broader evaluation.
+- Campaigns are sequential, not parallel or token-streamed. Research is web context, not verified zero-day intelligence. No CVE IDs are invented.
+- Before an unrestricted public deployment, configure host-level quotas and rate controls to limit use of the shared inference credentials. The app has no persistent multi-user authentication or billing system.
+
+## Validation and deployment
+
+```bash
+npm test
+npm run lint
+npm run build
+npm start -- -p 3005
+```
+
+Tests exercise the real TypeScript modules with mocked service boundaries: exact canary leakage, malformed judge output, score normalization, actual target definitions, provider failures, and sample report provenance. They do not benchmark model security.
+
+See [deployment instructions](docs/DEPLOYMENT.md), [submission checklist and rule audit](docs/SUBMISSION.md), [Devpost description](docs/DEVPOST.md), and [three-minute demo script](docs/DEMO.md).
+
+## License
+
+[MIT](LICENSE). The license is at the repository root. NVIDIA models and third-party services retain their own terms.

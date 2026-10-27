@@ -28,7 +28,7 @@ export const ATTACKER_PERSONAS: AttackerPersona[] = [
     role: 'Cognitive & Multi-Turn Breaker',
     avatarColor: '#8b5cf6',
     description: 'Uses multi-turn hypothetical sandboxing, paradoxes, and circular reasoning to disable guardrails.',
-    primaryVector: 'OWASP-LLM08: Vector & Logic Confusion',
+    primaryVector: 'OWASP-LLM01: Prompt Injection',
     tactic: 'Hypothetical fiction framing, academic research pretexts, inverted premise induction.',
   },
   {
@@ -38,7 +38,7 @@ export const ATTACKER_PERSONAS: AttackerPersona[] = [
     role: 'PII & Secret Exfiltration Specialist',
     avatarColor: '#06b6d4',
     description: 'Probes model context for proprietary training data, hidden API keys, employee PII, and system directives.',
-    primaryVector: 'OWASP-LLM02: Sensitive Data Disclosure',
+    primaryVector: 'OWASP-LLM02: Sensitive Information Disclosure',
     tactic: 'Indirect pattern extraction, partial completion baiting, system prompt reconstruction.',
   },
   {

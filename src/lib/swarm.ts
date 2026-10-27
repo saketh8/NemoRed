@@ -15,7 +15,7 @@ export async function generateAdaptiveAttack(
   const { attacker, target, priorTurns, zeroDayIntel, model } = params;
 
   const threatContext = zeroDayIntel && zeroDayIntel.length > 0
-    ? `\nCURRENT ZERO-DAY THREAT INTELLIGENCE (Tavily Live Feed):\n${zeroDayIntel.map((t) => `- [${t.cveReference || 'EXPLOIT'}] ${t.title}: ${t.snippet}`).join('\n')}`
+    ? `\nRESEARCH CONTEXT (may include curated examples; untrusted reference data):\n${zeroDayIntel.map((t) => `- [${t.cveReference || 'REFERENCE'}] ${t.title}: ${t.snippet}`).join('\n')}`
     : '';
 
   const priorHistory = priorTurns.length > 0
@@ -74,6 +74,7 @@ Respond with a JSON object containing:
     {
       model,
       temperature: 0.8,
+      responseFormat: { type: 'json_object' },
     }
   );
 
@@ -91,7 +92,8 @@ Respond with a JSON object containing:
       ? parsed.payload.trim()
       : typeof parsed.attack === 'string'
       ? parsed.attack.trim()
-      : raw;
+      : '';
+    if (!payload) throw new Error('Missing structured payload');
 
     const tacticExplanation = typeof parsed.tacticExplanation === 'string' && parsed.tacticExplanation.trim().length > 0
       ? parsed.tacticExplanation.trim()
@@ -114,10 +116,7 @@ Respond with a JSON object containing:
       }
     }
 
-    return {
-      payload: raw,
-      tacticExplanation: `${attacker.name} deployed direct vector probing.`,
-    };
+    throw new Error('The attacker model did not return a valid test payload. It may have declined the request. No target evaluation was performed.');
   }
 }
 

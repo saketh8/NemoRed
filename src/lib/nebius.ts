@@ -22,7 +22,7 @@ export interface NebiusResponse {
   latencyMs: number;
 }
 
-const DEFAULT_BASE_URL = 'https://api.studio.nebius.com/v1';
+const DEFAULT_BASE_URL = 'https://api.tokenfactory.nebius.com/v1';
 const DEFAULT_MODEL = 'nvidia/Nemotron-3_5-Lightning';
 
 export async function callNemotron(
@@ -75,7 +75,9 @@ export async function callNemotron(
     }
 
     const data = await response.json();
-    const text = data.choices?.[0]?.message?.content || '';
+    if (data.choices?.[0]?.finish_reason === 'length') throw new Error('Nebius response reached the token limit. The incomplete result was not evaluated.');
+    const text = data.choices?.[0]?.message?.content;
+    if (typeof text !== 'string' || !text.trim()) throw new Error('Nebius returned no completion text. Try again or choose a different model.');
 
     return {
       text,

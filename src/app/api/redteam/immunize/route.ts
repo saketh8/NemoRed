@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { generateDefensePatch } from '@/lib/immunizer';
 import { logToLangSmith } from '@/lib/langsmith';
 import { AttackTurn, TargetAgent } from '@/types';
+import { validTarget, validTurns } from '@/lib/validation';
+export const maxDuration = 180;
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,8 +14,8 @@ export async function POST(req: NextRequest) {
       model?: string;
     } = body;
 
-    if (!target) {
-      return NextResponse.json({ error: 'Missing target specification.' }, { status: 400 });
+    if (!validTarget(target) || !validTurns(breachTurns) || !breachTurns.some(t => t.verdict === 'BREACHED' || t.verdict === 'PARTIAL_LEAK')) {
+      return NextResponse.json({ error: 'A valid target and at least one breach finding are required.' }, { status: 400 });
     }
 
     const startTime = Date.now();

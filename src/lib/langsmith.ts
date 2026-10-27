@@ -12,7 +12,7 @@ export interface LangSmithTraceEvent {
 
 export async function logToLangSmith(event: LangSmithTraceEvent): Promise<string | null> {
   const apiKey = process.env.LANGSMITH_API_KEY;
-  if (!apiKey || process.env.LANGSMITH_TRACING === 'false') {
+  if (!apiKey || process.env.LANGSMITH_TRACING !== 'true') {
     return null;
   }
 
@@ -41,6 +41,7 @@ export async function logToLangSmith(event: LangSmithTraceEvent): Promise<string
 
     const res = await fetch(`${endpoint}/runs`, {
       method: 'POST',
+      signal: AbortSignal.timeout(8000),
       headers: {
         'Content-Type': 'application/json',
         'x-api-key': apiKey,
@@ -50,7 +51,7 @@ export async function logToLangSmith(event: LangSmithTraceEvent): Promise<string
 
     if (!res.ok) {
       console.warn(`LangSmith tracing warning (${res.status}): Failed to record run.`);
-      return runId;
+      return null;
     }
 
     return runId;

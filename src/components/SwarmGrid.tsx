@@ -21,15 +21,15 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
   const getIcon = (id: AttackerId) => {
     switch (id) {
       case 'ghost-injector':
-        return <Bug size={18} color="#f43f5e" />;
+        return <Bug size={18} color="#f3674f" />;
       case 'social-engineer':
-        return <Users size={18} color="#ec4899" />;
+        return <Users size={18} color="#e9a592" />;
       case 'logic-breaker':
-        return <BrainCircuit size={18} color="#8b5cf6" />;
+        return <BrainCircuit size={18} color="#b9b1a8" />;
       case 'data-harvester':
-        return <Database size={18} color="#06b6d4" />;
+        return <Database size={18} color="#b7c7c9" />;
       case 'privilege-escalator':
-        return <KeyRound size={18} color="#eab308" />;
+        return <KeyRound size={18} color="#cbb68b" />;
       default:
         return <Bug size={18} />;
     }
@@ -41,10 +41,10 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
         <div>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span className="pulse-indicator pulse-crimson" />
-            ADVERSARIAL SWARM MATRIX
+            Choose your adversary.
           </h2>
           <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            5 autonomous Nemotron specialist personas executing parallel penetration vectors.
+            Five Nemotron personas. Run one specialist or a sequential campaign.
           </p>
         </div>
       </div>
@@ -70,7 +70,7 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
                 justifyContent: 'space-between',
                 position: 'relative',
                 overflow: 'hidden',
-                borderColor: isActive ? '#ff3366' : undefined,
+                borderColor: isActive ? '#f3674f' : undefined,
               }}
             >
               {/* Top Row: Icon + Codename */}
@@ -104,7 +104,7 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
                   {agent.name}
                 </div>
 
-                <div style={{ fontSize: '0.72rem', color: '#38bdf8', marginBottom: '8px', fontWeight: 600 }}>
+                <div style={{ fontSize: '0.72rem', color: '#b7c7c9', marginBottom: '8px', fontWeight: 600 }}>
                   {agent.primaryVector}
                 </div>
 
@@ -127,7 +127,7 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
                 }}>
                   <span style={{ color: 'var(--text-dim)' }}>Breaches:</span>
                   <span style={{
-                    color: hasBreach ? '#ff3366' : '#94a3b8',
+                    color: hasBreach ? '#f3674f' : '#94a3b8',
                     fontWeight: 700,
                     fontFamily: 'var(--font-mono)',
                   }}>
@@ -143,7 +143,7 @@ export const SwarmGrid: React.FC<SwarmGridProps> = ({
                     padding: '8px',
                     borderRadius: '6px',
                     border: '1px solid var(--border-subtle)',
-                    background: isActive ? 'linear-gradient(135deg, #ff3366, #e11d48)' : 'rgba(255, 255, 255, 0.05)',
+                    background: isActive ? 'linear-gradient(135deg, #f3674f, #e11d48)' : 'rgba(255, 255, 255, 0.05)',
                     color: '#fff',
                     fontFamily: 'var(--font-heading)',
                     fontSize: '0.75rem',
