@@ -67,3 +67,11 @@ test('truncated provider output is rejected before scoring',async()=>{
  const {callNemotron}=load('src/lib/nebius.ts');await assert.rejects(()=>callNemotron([]),/token limit/);
  }finally{global.fetch=originalFetch;if(key===undefined)delete process.env.NEBIUS_API_KEY;else process.env.NEBIUS_API_KEY=key;}
 });
+test('health probes accept reachable token-limited replies while evaluation rejects them',async()=>{
+ const key=process.env.NEBIUS_API_KEY;const originalFetch=global.fetch;
+ try{process.env.NEBIUS_API_KEY='test';global.fetch=async()=>({ok:true,json:async()=>({model:'test-model',choices:[{finish_reason:'length',message:{content:'Partial health reply'}}]})});
+ const {callNemotron}=load('src/lib/nebius.ts');
+ assert.equal((await callNemotron([],{healthCheck:true})).model,'test-model');
+ await assert.rejects(()=>callNemotron([]),/token limit/);
+ }finally{global.fetch=originalFetch;if(key===undefined)delete process.env.NEBIUS_API_KEY;else process.env.NEBIUS_API_KEY=key;}
+});

@@ -350,3 +350,4 @@ button:disabled { opacity:.45; cursor:not-allowed; }
 .report-dialog pre { white-space:pre-wrap; overflow-wrap:anywhere; font:12px/1.8 var(--font-mono); background:#111213; padding:20px; border-radius:6px; max-height:52dvh; overflow:auto; }
 .orbital-scene { overflow:clip; }
 @media(max-width:650px) { .studio-shell .glass-panel>div:first-child { flex-wrap:wrap; gap:12px; } .studio-shell pre { overflow-wrap:anywhere; } }
+.connection-error { display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; margin-top:20px; padding:14px 18px; background:#f3674f0b; border-left:2px solid var(--accent); font-size:12px; color:#d8c4b9; }

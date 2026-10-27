@@ -34,6 +34,7 @@ export default function Home() {
   const [nebiusLatency, setNebiusLatency] = useState<number>(0);
   const [nebiusStatus, setNebiusStatus] = useState<'connected' | 'error' | 'loading'>('loading');
 
+  const [nebiusError, setNebiusError] = useState<string | null>(null);
   const [langSmithEnabled, setLangSmithEnabled] = useState(false);
   const [tavilyStatus, setTavilyStatus] = useState('checking');
   const [isSample, setIsSample] = useState(false);
@@ -60,12 +61,14 @@ export default function Home() {
         const data = await res.json();
         setNebiusLatency(data.nebius?.latencyMs || 0);
         setNebiusStatus(data.nebius?.status || 'error');
+        setNebiusError(data.nebius?.reason || null);
         if (data.nebius?.model) setActiveModel(data.nebius.model);
         setLangSmithEnabled(Boolean(data.langsmith?.hasKey && data.langsmith?.tracing));
         setTavilyStatus(data.tavily?.hasKey ? 'configured; fallback on failure' : 'curated examples');
-      } else { setNebiusStatus('error'); }
+      } else { setNebiusStatus('error'); setNebiusError('The app status endpoint failed. Retry the connection.'); }
     } catch {
       setNebiusStatus('error');
+      setNebiusError('Could not reach the app server. Retry the connection.');
     }
   }, []);
 
@@ -403,6 +406,8 @@ export default function Home() {
         onModelChange={(model) => { if (busy) return; setActiveModel(model); setTurns([]); setPatch(null); setIsSample(false); }}
         nebiusStatus={nebiusStatus}
         nebiusLatency={nebiusLatency}
+        nebiusError={nebiusError}
+        onRetryConnection={() => { setNebiusStatus('loading'); setNebiusError(null); void fetchStatus(); }}
         langSmithEnabled={langSmithEnabled}
         tavilyStatus={tavilyStatus}
         onRunBlitz={handleRunBlitz}

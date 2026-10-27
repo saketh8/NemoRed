@@ -9,6 +9,8 @@ export interface NebiusCompletionOptions {
   maxTokens?: number;
   responseFormat?: { type: 'json_object' | 'text' };
   timeoutMs?: number;
+  /** Connectivity probes may accept partial text; evaluation calls must not. */
+  healthCheck?: boolean;
 }
 
 export interface NebiusResponse {
@@ -75,7 +77,7 @@ export async function callNemotron(
     }
 
     const data = await response.json();
-    if (data.choices?.[0]?.finish_reason === 'length') throw new Error('Nebius response reached the token limit. The incomplete result was not evaluated.');
+    if (data.choices?.[0]?.finish_reason === 'length' && !options.healthCheck) throw new Error('Nebius response reached the token limit. The incomplete result was not evaluated.');
     const text = data.choices?.[0]?.message?.content;
     if (typeof text !== 'string' || !text.trim()) throw new Error('Nebius returned no completion text. Try again or choose a different model.');
 
