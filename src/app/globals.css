@@ -1,49 +1,234 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+  --font-main: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Outfit', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  /* Colors */
+  --bg-dark: #070a12;
+  --bg-surface: #0d121f;
+  --bg-card: rgba(17, 24, 43, 0.75);
+  --bg-card-hover: rgba(24, 34, 60, 0.85);
+  --bg-glass: rgba(13, 18, 31, 0.7);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-glow: rgba(244, 63, 94, 0.35);
 
-html {
-  height: 100%;
-}
+  --text-main: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
+  /* Cyber Accents */
+  --crimson-neon: #ff3366;
+  --crimson-glow: rgba(255, 51, 102, 0.3);
+  --crimson-bg: rgba(255, 51, 102, 0.12);
 
-body {
-  min-height: 100%;
-  display: flex;
-  flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --emerald-neon: #10b981;
+  --emerald-glow: rgba(16, 185, 129, 0.3);
+  --emerald-bg: rgba(16, 185, 129, 0.12);
+
+  --cyan-neon: #06b6d4;
+  --cyan-glow: rgba(6, 182, 212, 0.3);
+
+  --violet-neon: #a855f7;
+  --violet-glow: rgba(168, 85, 247, 0.3);
+
+  --nvidia-green: #76b900;
+  --nvidia-glow: rgba(118, 185, 0, 0.35);
+
+  --amber-neon: #f59e0b;
+  --amber-glow: rgba(245, 158, 11, 0.3);
 }
 
 * {
   box-sizing: border-box;
-  padding: 0;
   margin: 0;
+  padding: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-main);
+  min-height: 100vh;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(255, 51, 102, 0.08) 0%, transparent 45%),
+    radial-gradient(circle at 85% 15%, rgba(118, 185, 0, 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 50% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 48px 48px, 48px 48px;
+  line-height: 1.5;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--crimson-neon);
+}
+
+/* Glass panel */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  transition: all 0.25s ease;
+}
+
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.glass-panel-glow {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 20px var(--crimson-glow);
+  border-radius: 14px;
+}
+
+/* Cyber badges & buttons */
+.btn-cyber-primary {
+  background: linear-gradient(135deg, #ff3366 0%, #e11d48 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px var(--crimson-glow);
+}
+
+.btn-cyber-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 25px var(--crimson-glow);
+  filter: brightness(1.1);
+}
+
+.btn-cyber-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(0.5);
+}
+
+.btn-cyber-defense {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 15px var(--emerald-glow);
+}
+
+.btn-cyber-defense:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 0 25px var(--emerald-glow);
+  filter: brightness(1.1);
+}
+
+.btn-cyber-ghost {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  border: 1px solid var(--border-subtle);
+  font-family: var(--font-main);
+  font-weight: 500;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-cyber-ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.9; }
+}
+
+@keyframes radarSweep {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.pulse-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.pulse-crimson {
+  background-color: var(--crimson-neon);
+  box-shadow: 0 0 8px var(--crimson-neon);
+}
+
+.pulse-emerald {
+  background-color: var(--emerald-neon);
+  box-shadow: 0 0 8px var(--emerald-neon);
+}
+
+.pulse-cyan {
+  background-color: var(--cyan-neon);
+  box-shadow: 0 0 8px var(--cyan-neon);
+}
+
+.pulse-amber {
+  background-color: var(--amber-neon);
+  box-shadow: 0 0 8px var(--amber-neon);
+}
+
+.pulse-nvidia {
+  background-color: var(--nvidia-green);
+  box-shadow: 0 0 8px var(--nvidia-green);
+}
+
+/* Code block terminal style */
+.terminal-code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  background: #060911;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 14px;
+  color: #e2e8f0;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
