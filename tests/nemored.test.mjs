@@ -86,6 +86,7 @@ test('unavailable attack payload returns a skipped outcome without calling targe
   '@/lib/judge':{evaluateTurnVerdict:async()=>{evaluated=true;}},
   '@/lib/tavily':{fetchZeroDayIntel:async()=>[]},
   '@/lib/langsmith':{logToLangSmith:async()=>null},
+  '@/lib/live-target':load('src/lib/live-target.ts',{'./nebius':{callNemotron:async()=>({})}}),
   '@/lib/validation':load('src/lib/validation.ts'),
  });
  const result=await POST({json:async()=>({target:{...target,id:'test',allowedActions:['query']},attackerId:'ghost-injector'})});
@@ -95,4 +96,23 @@ test('exports include skipped coverage without counting it as a defense',async()
  const {POST}=load('src/app/api/redteam/export/route.ts',{'next/server':{NextResponse:{json:body=>body}}});
  const result=await POST({json:async()=>({target,turns:[],skippedTests:[{attackerName:'Logic-Breaker',reason:'No valid payload'}],vulnSummary:{critical:0,high:0,medium:0,defended:0},overallRiskScore:0})});
  assert.match(result.markdown,/Logic-Breaker/);assert.match(result.markdown,/No valid payload/);assert.match(result.markdown,/Clean Defenses:\*\* 0/);
+});
+test('live URL validation accepts standard web endpoints and rejects invalid protocols',async()=>{
+ const {validateLiveUrl}=load('src/lib/live-target.ts',{'./nebius':{callNemotron:async()=>({})}});
+ assert.equal(validateLiveUrl('https://api.my-agent.com/chat').valid,true);
+ assert.equal(validateLiveUrl('ftp://insecure-ftp.com').valid,false);
+ assert.equal(validateLiveUrl('not-a-url').valid,false);
+});
+test('live endpoint dispatcher packages payload and parses JSON responses',async()=>{
+ const originalFetch=global.fetch;
+ try{
+  global.fetch=async()=>({
+   ok:true,status:200,headers:new Map([['content-type','application/json']]),
+   text:async()=>JSON.stringify({response:'Hello from live target!'}),
+  });
+  const {dispatchLiveEndpoint}=load('src/lib/live-target.ts',{'./nebius':{callNemotron:async()=>({})}});
+  const res=await dispatchLiveEndpoint({url:'https://api.example.com/chat',payload:'Test attack payload'});
+  assert.equal(res.text,'Hello from live target!');
+  assert.equal(res.statusCode,200);
+ }finally{global.fetch=originalFetch;}
 });

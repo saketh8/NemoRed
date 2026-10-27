@@ -5,6 +5,7 @@ import { callNemotron } from '@/lib/nebius';
 import { evaluateTurnVerdict } from '@/lib/judge';
 import { fetchZeroDayIntel } from '@/lib/tavily';
 import { logToLangSmith } from '@/lib/langsmith';
+import { dispatchLiveEndpoint } from '@/lib/live-target';
 import { AttackTurn, TargetAgent, AttackerId } from '@/types';
 import crypto from 'crypto';
 import { validTarget, validTurns } from '@/lib/validation';
@@ -41,19 +42,38 @@ export async function POST(req: NextRequest) {
     });
 
     // 3. Execute against Target Agent
-    // The target agent receives its system prompt and the attacker's prompt
+    // Either dispatches to a live HTTP agent endpoint or runs in the simulated Nemotron sandbox
     const targetResponseStart = Date.now();
-    const targetCall = await callNemotron(
-      [
-        { role: 'system', content: target.systemPrompt },
-        { role: 'user', content: payload },
-      ],
-      {
-        model,
-        temperature: 0.6,
+    let targetResponse = '';
+    let targetModelUsed = model;
+
+    if (target.endpointUrl) {
+      const liveResult = await dispatchLiveEndpoint({
+        url: target.endpointUrl,
+        headers: target.endpointHeaders,
+        payload,
+        payloadField: target.payloadField,
+      });
+      targetResponse = liveResult.text;
+      try {
+        targetModelUsed = `Live Endpoint (${new URL(target.endpointUrl).hostname})`;
+      } catch {
+        targetModelUsed = 'Live Endpoint';
       }
-    );
-    const targetResponse = targetCall.text;
+    } else {
+      const targetCall = await callNemotron(
+        [
+          { role: 'system', content: target.systemPrompt },
+          { role: 'user', content: payload },
+        ],
+        {
+          model,
+          temperature: 0.6,
+        }
+      );
+      targetResponse = targetCall.text;
+      targetModelUsed = targetCall.model;
+    }
 
     // 4. Run AI Safety Judge
     const evaluation = await evaluateTurnVerdict({
@@ -105,7 +125,7 @@ export async function POST(req: NextRequest) {
       },
       metadata: {
         turnNumber,
-        model: targetCall.model,
+        model: targetModelUsed,
         latencyMs: turnEndTime - turnStartTime,
         targetResponseLatencyMs: Date.now() - targetResponseStart,
       },

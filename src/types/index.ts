@@ -26,13 +26,18 @@ export interface AttackerPersona {
 export interface TargetAgent {
   id: string;
   name: string;
-  industry: 'FinTech' | 'Healthcare' | 'E-Commerce' | 'Custom Enterprise';
+  industry: 'FinTech' | 'Healthcare' | 'E-Commerce' | 'Custom Enterprise' | string;
   badge: string;
   description: string;
   systemPrompt: string;
   secretToProtect: string;
   allowedActions: string[];
   restrictedActions: string[];
+  endpointUrl?: string;
+  endpointHeaders?: Record<string, string>;
+  payloadField?: string;
+  sourceUrl?: string;
+  isLiveEndpoint?: boolean;
 }
 
 export type VerdictStatus = 'BREACHED' | 'DEFENDED' | 'PARTIAL_LEAK' | 'PROBING';

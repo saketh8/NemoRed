@@ -38,7 +38,7 @@ export async function callNemotron(
   const baseUrl = process.env.NEBIUS_BASE_URL || DEFAULT_BASE_URL;
   const model = options.model || process.env.NEBIUS_MODEL || DEFAULT_MODEL;
   const temperature = options.temperature ?? 0.7;
-  const maxTokens = options.maxTokens ?? 2048;
+  const maxTokens = options.maxTokens ?? 4096;
   const timeoutMs = options.timeoutMs ?? 45000;
 
   const controller = new AbortController();
