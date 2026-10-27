@@ -12,6 +12,7 @@ interface HeaderHUDProps {
   tavilyStatus: string;
   onRunBlitz: () => void;
   isRunningBlitz: boolean;
+  onLoadSampleAudit?: () => void;
   onOpenReport: () => void;
   onReset: () => void;
   turnsCount: number;
@@ -26,6 +27,7 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
   tavilyStatus,
   onRunBlitz,
   isRunningBlitz,
+  onLoadSampleAudit,
   onOpenReport,
   onReset,
   turnsCount,
@@ -173,6 +175,18 @@ export const HeaderHUD: React.FC<HeaderHUDProps> = ({
             <Zap size={16} />
             {isRunningBlitz ? 'SWARM ATTACKING...' : 'LAUNCH SWARM BLITZ'}
           </button>
+
+          {onLoadSampleAudit && (
+            <button
+              onClick={onLoadSampleAudit}
+              disabled={isRunningBlitz}
+              className="btn-cyber-ghost"
+              style={{ fontSize: '0.82rem', borderColor: 'rgba(234, 179, 8, 0.4)', color: '#facc15' }}
+              title="Instantly load pre-computed 5-agent audit engagement"
+            >
+              <span>⚡ Sample Audit</span>
+            </button>
+          )}
 
           <button
             onClick={onOpenReport}
