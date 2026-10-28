@@ -13,6 +13,7 @@ import { ImmunizerPanel } from '@/components/ImmunizerPanel';
 import { OwaspScorecard } from '@/components/OwaspScorecard';
 import { ThreatFeed } from '@/components/ThreatFeed';
 import { AuditReportModal } from '@/components/AuditReportModal';
+import { LiveThreatScanner } from '@/components/LiveThreatScanner';
 
 export default function Home() {
   const [currentTarget, setCurrentTarget] = useState<TargetAgent>(PRECONFIGURED_TARGETS[0]);
@@ -39,7 +40,7 @@ export default function Home() {
   const [langSmithEnabled, setLangSmithEnabled] = useState(false);
   const [tavilyStatus, setTavilyStatus] = useState('checking');
   const [isSample, setIsSample] = useState(false);
-  const [view, setView] = useState<'test' | 'findings' | 'harden'>('test');
+  const [view, setView] = useState<'test' | 'detector' | 'findings' | 'harden'>('test');
   const busy = isRunning || isImmunizing;
 
   // Audit modal
@@ -441,7 +442,7 @@ export default function Home() {
         turnsCount={turns.length + skippedTests.length}
       />
 
-      <div className="workspace-tabs" role="tablist" aria-label="Studio views">{(['test', 'findings', 'harden'] as const).map((tab, i) => <button key={tab} role="tab" aria-selected={view === tab} aria-controls={`panel-${tab}`} id={`tab-${tab}`} onClick={() => setView(tab)}><span>0{i+1}</span>{tab === 'test' ? 'Configure & test' : tab === 'findings' ? `Findings${turns.length ? ` (${turns.length})` : ''}` : 'Harden & retest'}</button>)}</div>
+      <div className="workspace-tabs" role="tablist" aria-label="Studio views">{([ 'test', 'detector', 'findings', 'harden'] as const).map((tab, i) => <button key={tab} role="tab" aria-selected={view === tab} aria-controls={`panel-${tab}`} id={`tab-${tab}`} onClick={() => setView(tab)}><span>0{i+1}</span>{tab === 'test' ? 'Configure & test' : tab === 'detector' ? 'Live threat detector' : tab === 'findings' ? `Findings${turns.length ? ` (${turns.length})` : ''}` : 'Harden & retest'}</button>)}</div>
       {isSample && <div className="sample-notice" role="status">Illustrative sample · These transcripts are fixtures, not live model results. Start a live campaign to generate submission evidence.</div>}
       {skippedTests.length > 0 && <aside className="sample-notice" aria-label="Skipped tests"><strong>{skippedTests.length} skipped test{skippedTests.length === 1 ? '' : 's'} · not evaluated</strong><ul>{skippedTests.map((test, index) => <li key={`${test.attackerName}-${index}`}><strong>{test.attackerName}:</strong> {test.reason}</li>)}</ul><p>Skipped tests do not count as defenses or contribute to risk scores.</p></aside>}
       {busy && <div className="run-progress" role="status"><span className="progress-shimmer"/><p>{isImmunizing ? 'Generating a defense patch and replaying the exploit…' : `Testing ${activeAttackerName || 'agent'} · results appear after evaluation`}</p></div>}
@@ -460,6 +461,10 @@ export default function Home() {
         isRunning={busy}
         attackerTurnCounts={attackerTurnCounts}
       />
+
+      </section><section id="panel-detector" role="tabpanel" aria-labelledby="tab-detector" hidden={view !== 'detector'}>
+      {/* Live Inbound AI Threat Detector */}
+      <LiveThreatScanner activeModel={activeModel} />
 
       </section><section id="panel-findings" role="tabpanel" aria-labelledby="tab-findings" hidden={view !== 'findings'}>
       {/* Live Combat Theater & Audit Logs */}

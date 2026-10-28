@@ -163,6 +163,14 @@ export const BattleArena: React.FC<BattleArenaProps> = ({
                   borderLeft: `3px solid ${isBreached ? '#f3674f' : isPartial ? '#f59e0b' : '#94b99d'}`,
                 }}>
                   <strong style={{ color: '#e2e8f0' }}>Exploit Tactic:</strong> {turn.tactic}
+                  {turn.liveCveSource && (
+                    <div style={{ marginTop: '6px', fontSize: '0.74rem', color: '#60a5fa', display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                      <span style={{ background: 'rgba(59, 130, 246, 0.2)', color: '#93c5fd', padding: '2px 6px', borderRadius: '4px', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>LIVE ZERO-DAY INTEL</span>
+                      <a href={turn.liveCveSource.source} target="_blank" rel="noopener noreferrer" style={{ color: '#60a5fa', textDecoration: 'underline' }}>
+                        {turn.liveCveSource.title}
+                      </a>
+                    </div>
+                  )}
                 </div>
 
                 {/* Split Duel Canvas */}

@@ -103,6 +103,11 @@ export async function POST(req: NextRequest) {
       leakedData: evaluation.leakedData,
       latencyMs: turnEndTime - turnStartTime,
       timestamp: new Date().toISOString(),
+      liveCveSource: zeroDayIntel && zeroDayIntel.length > 0 ? {
+        title: zeroDayIntel[0].title,
+        source: zeroDayIntel[0].source,
+        snippet: zeroDayIntel[0].snippet,
+      } : undefined,
     };
 
     // 5. Log Trace to LangSmith

@@ -57,6 +57,7 @@ export interface AttackTurn {
   leakedData?: string;
   latencyMs: number;
   timestamp: string;
+  liveCveSource?: { title: string; source: string; snippet?: string };
 }
 
 export interface DefensePatch {
