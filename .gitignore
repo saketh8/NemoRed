@@ -43,3 +43,12 @@ next-env.d.ts
 
 # Local QA screenshots and transcripts
 /artifacts/
+
+# Media and demo recordings
+*.mp4
+*.webm
+*.mov
+*.mp3
+*.wav
+/public/demo-clips/
+
