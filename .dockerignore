@@ -4,3 +4,7 @@ node_modules
 .env*
 artifacts
 *.tsbuildinfo
+
+.wrangler
+.dev.vars
+.dev.vars.*

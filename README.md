@@ -4,7 +4,7 @@
 
 [MIT License](LICENSE) · Built for the [Nebius × NVIDIA Global AI Hackathon](https://nebiusglobalaihackathon.devpost.com/) · Recommended track: **Best Apps and Agents**
 
-NEMO-RED helps AI application builders inspect how their agent's system prompt responds to adversarial requests. Five Nemotron personas generate probes; a simulated target responds; a separate Nemotron call judges the transcript. A defense generator proposes a revised prompt and replays one discovered exploit.
+NEMO-RED helps AI application builders inspect how their agent's system prompt responds to adversarial requests. Five Nemotron personas generate probes; a simulated target or configured HTTP agent responds; a separate Nemotron call judges the transcript. A defense generator proposes a revised prompt and replays one discovered exploit.
 
 ## Run locally
 
@@ -19,13 +19,13 @@ cp .env.example .env.local
 npm run dev -- -p 3005
 ```
 
-Open http://localhost:3005. Without credentials, use **Explore a sample** for an explicitly labeled illustrative walkthrough. Sample results are not proof of live inference and cannot be used to generate a defense patch. Real campaigns replace sample evidence.
+Open http://localhost:3005. Without credentials, use **Try the demo** or **Sample** for an explicitly labeled illustrative walkthrough. Sample results are not proof of live inference and cannot be used to generate a defense patch. Real campaigns replace sample evidence.
 
 | Variable | Purpose |
 | --- | --- |
 | `NEBIUS_API_KEY` | Required for live attacks, judging, and defense synthesis. Server only. |
 | `NEBIUS_MODEL` | Defaults to `nvidia/Nemotron-3_5-Lightning`; use an exact model ID available to your account. |
-| `NEBIUS_BASE_URL` | Defaults to `https://api.tokenfactory.nebius.com/v1`. |
+| `NEBIUS_BASE_URL` | Example configuration: `https://api.tokenfactory.nebius.com/v1`; adapter fallback: `https://api.studio.nebius.com/v1`. |
 | `TAVILY_API_KEY` | Optional research retrieval. Missing/failed requests use labeled curated examples. |
 | `LANGSMITH_API_KEY` | Optional trace delivery. |
 | `LANGSMITH_TRACING` | Set `true` to send transcripts to LangSmith; default example is `false`. |
@@ -39,7 +39,7 @@ Never commit `.env.local` or put keys in browser code. Custom prompts and fictio
 2. Select a built-in fictional target or configure a system prompt and synthetic canary.
 3. Dispatch one specialist, or run all five sequentially. The next probe receives earlier findings; target calls are separate conversations.
 4. Inspect Findings: payload, response, risk score, and judge reasoning. `PROBING` means an inconclusive judge response, not a defense.
-5. For a live breach, open Harden & retest and generate a patch. Review the original and proposed prompts plus the single replay verdict.
+5. For a live breach, open **Harden** and select **Generate defense**. Review the original and proposed prompts plus the single replay verdict.
 6. Apply to the sandbox, then run a fresh campaign. Export the evidence as Markdown.
 
 The interface includes animated pointer-reactive orbital artwork, interactive workflow explanations, focused studio views, progress states, a reduced-motion mode, mobile layouts, and a keyboard-accessible report dialog.
@@ -60,7 +60,7 @@ Tavily contributes retrieved context to probe generation. LangSmith can capture 
 
 ## Scope and limits
 
-- This is a prompt-level sandbox, not an integration with deployed third-party agents. Tool execution is simulated in model text; no real transfers, refunds, or clinical actions occur.
+- Built-in and website-derived targets run as prompt-level simulations. An optional HTTP endpoint mode sends test payloads to an agent you configure. Defense replay and patch application operate on the sandbox, not on that external endpoint.
 - Selected tests align with OWASP LLM01 (prompt injection), LLM02 (sensitive information disclosure), LLM06 (excessive agency), and LLM07 (system prompt leakage). This is not a complete Top 10 audit or compliance certification.
 - A score is a model judgment, not a calibrated probability. The same model family in all roles can share blind spots. Review transcripts and repeat tests.
 - A generated prompt and one successful replay do not establish general security. Production controls need authorization enforcement, secret isolation, tool validation, and broader evaluation.
@@ -83,3 +83,14 @@ See [deployment instructions](docs/DEPLOYMENT.md), [submission checklist and rul
 ## License
 
 [MIT](LICENSE). The license is at the repository root. NVIDIA models and third-party services retain their own terms.
+
+## Repository layout
+
+- `src/app` — pages and server API routes.
+- `src/components` — interactive studio UI.
+- `src/lib` — model adapter, evaluation, target handling, and integrations.
+- `tests` — module and browser checks.
+- `public` — assets used by the application.
+- `docs` — setup, submission, and validation guidance.
+
+Generated videos, narration, diagrams, screenshots, and production notes live locally in ignored `artifacts/`. Dependencies, build output, Cloudflare state, and local secrets are also excluded from Git.
