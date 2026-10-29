@@ -46,13 +46,11 @@ The interface includes animated pointer-reactive orbital artwork, interactive wo
 
 ## How NVIDIA and Nebius are used
 
-```text
-Optional Tavily research → Nemotron attacker → Nemotron target sandbox
-                                               ↓
-                                      Nemotron transcript judge
-                                               ↓
-                             Nemotron defense proposal → target replay → judge
-```
+[![NemoRed architecture: browser studio, Next.js test pipeline, defense replay, and NVIDIA Nemotron on Nebius Token Factory](docs/images/architecture.png)](docs/images/architecture.png)
+
+[View full-size diagram](docs/images/architecture.png) · [Editable vector diagram](docs/images/architecture.svg)
+
+The browser studio calls validated Next.js API routes. The server coordinates attack generation, target execution, judging, and defense replay through a shared Nebius adapter. Targets can be simulated assistants or configured HTTP endpoints; website imports create simulations. Tavily research and LangSmith tracing are optional.
 
 `src/lib/nebius.ts` makes server-side OpenAI-compatible chat completion calls to Token Factory. NVIDIA Nemotron powers the attacker, simulated target, judge, and patch generator. Token Factory supplies hosted inference, so the application does not need to provision a GPU or serve model weights. The same selected model is used for all roles in a campaign. This version does not implement separate small/large model routing.
 
@@ -91,6 +89,6 @@ See [deployment instructions](docs/DEPLOYMENT.md), [submission checklist and rul
 - `src/lib` — model adapter, evaluation, target handling, and integrations.
 - `tests` — module and browser checks.
 - `public` — assets used by the application.
-- `docs` — setup, submission, and validation guidance.
+- `docs` — architecture assets, deployment instructions, submission guidance, and validation notes.
 
-Generated videos, narration, diagrams, screenshots, and production notes live locally in ignored `artifacts/`. Dependencies, build output, Cloudflare state, and local secrets are also excluded from Git.
+The published architecture diagram lives in `docs/images/`. Generated videos, narration, working diagram exports, screenshots, and production notes stay locally in ignored `artifacts/`. Dependencies, build output, Cloudflare state, and local secrets are also excluded from Git.
