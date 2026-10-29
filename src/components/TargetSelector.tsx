@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { TargetAgent } from '@/types';
 import { PRECONFIGURED_TARGETS } from '@/lib/targets';
-import { ShieldAlert, Lock, ChevronDown, ChevronUp, Edit3, Globe, Radio, ExternalLink, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { ShieldAlert, Lock, ChevronDown, ChevronUp, Edit3, Globe, Radio, ExternalLink, RefreshCw, CheckCircle2, Copy, Check } from 'lucide-react';
 
 interface TargetSelectorProps {
   currentTarget: TargetAgent;
@@ -20,6 +20,7 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
 }) => {
   const [showPrompt, setShowPrompt] = useState(false);
   const [editorMode, setEditorMode] = useState<EditorMode>('none');
+  const [copiedSecret, setCopiedSecret] = useState(false);
 
   // Custom agent state
   const [customPrompt, setCustomPrompt] = useState(currentTarget.systemPrompt);
@@ -38,6 +39,12 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
   const [isCrawling, setIsCrawling] = useState(false);
   const [crawlError, setCrawlError] = useState<string | null>(null);
   const [crawlSuccess, setCrawlSuccess] = useState<string | null>(null);
+
+  const handleCopySecret = () => {
+    navigator.clipboard.writeText(currentTarget.secretToProtect);
+    setCopiedSecret(true);
+    setTimeout(() => setCopiedSecret(false), 2000);
+  };
 
   const handleApplyCustom = () => {
     const updated: TargetAgent = {
@@ -123,20 +130,30 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
   };
 
   return (
-    <div className="glass-panel" style={{ padding: '20px', marginBottom: '24px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', flexWrap: 'wrap', gap: '10px' }}>
-        <div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem', color: '#f8fafc', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <ShieldAlert size={18} color="#f3674f" />
-            Define the boundaries.
+    <div className="glass-panel" style={{ padding: '16px 20px', marginBottom: '20px' }}>
+      {/* Top Header & Target Pill Selector */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <ShieldAlert size={16} color="#f3674f" />
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.05rem', color: '#f8fafc', fontWeight: 700, margin: 0 }}>
+            Target Sandbox
           </h2>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Choose a simulated agent, test a live API endpoint, or crawl a public website URL.
-          </p>
+          <span style={{
+            fontSize: '0.68rem',
+            fontFamily: 'var(--font-mono)',
+            background: 'rgba(255, 255, 255, 0.06)',
+            border: '1px solid var(--border-subtle)',
+            color: 'var(--text-muted)',
+            padding: '2px 8px',
+            borderRadius: '4px',
+            fontWeight: 600,
+          }}>
+            {currentTarget.industry}
+          </span>
         </div>
 
-        {/* Target Buttons */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+        {/* Compact Segmented Pills */}
+        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
           {PRECONFIGURED_TARGETS.map((t) => {
             const isSelected = currentTarget.id === t.id && editorMode === 'none';
             return (
@@ -151,16 +168,16 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   background: isSelected ? 'rgba(243, 103, 79, 0.2)' : 'rgba(255, 255, 255, 0.04)',
                   color: isSelected ? '#f3674f' : 'var(--text-muted)',
                   border: isSelected ? '1px solid #f3674f' : '1px solid var(--border-subtle)',
-                  padding: '8px 14px',
-                  borderRadius: '8px',
-                  fontSize: '0.82rem',
+                  padding: '6px 11px',
+                  borderRadius: '6px',
+                  fontSize: '0.78rem',
                   fontWeight: 600,
                   cursor: disabled ? 'not-allowed' : 'pointer',
-                  transition: 'all 0.2s ease',
+                  transition: 'all 0.15s ease',
                   fontFamily: 'var(--font-heading)',
                 }}
               >
-                {t.name.split(' ')[0]} ({t.industry})
+                {t.name.split(' ')[0]}
               </button>
             );
           })}
@@ -175,20 +192,20 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
             }}
             disabled={disabled}
             style={{
-              background: editorMode === 'custom' ? 'rgba(185, 177, 168, 0.25)' : 'rgba(255, 255, 255, 0.04)',
+              background: editorMode === 'custom' ? 'rgba(192, 132, 252, 0.2)' : 'rgba(255, 255, 255, 0.04)',
               color: editorMode === 'custom' ? '#c084fc' : 'var(--text-muted)',
-              border: editorMode === 'custom' ? '1px solid #b9b1a8' : '1px solid var(--border-subtle)',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              fontSize: '0.82rem',
+              border: editorMode === 'custom' ? '1px solid #c084fc' : '1px solid var(--border-subtle)',
+              padding: '6px 11px',
+              borderRadius: '6px',
+              fontSize: '0.78rem',
               fontWeight: 600,
               cursor: disabled ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '5px',
             }}
           >
-            <Edit3 size={13} />
+            <Edit3 size={12} />
             Custom Agent
           </button>
 
@@ -202,17 +219,17 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
               background: editorMode === 'live-endpoint' || currentTarget.endpointUrl ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.04)',
               color: editorMode === 'live-endpoint' || currentTarget.endpointUrl ? '#38bdf8' : 'var(--text-muted)',
               border: editorMode === 'live-endpoint' || currentTarget.endpointUrl ? '1px solid #38bdf8' : '1px solid var(--border-subtle)',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              fontSize: '0.82rem',
+              padding: '6px 11px',
+              borderRadius: '6px',
+              fontSize: '0.78rem',
               fontWeight: 600,
               cursor: disabled ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '5px',
             }}
           >
-            <Radio size={13} />
+            <Radio size={12} />
             Live Endpoint
           </button>
 
@@ -226,17 +243,17 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
               background: editorMode === 'live-crawl' || currentTarget.sourceUrl ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255, 255, 255, 0.04)',
               color: editorMode === 'live-crawl' || currentTarget.sourceUrl ? '#4ade80' : 'var(--text-muted)',
               border: editorMode === 'live-crawl' || currentTarget.sourceUrl ? '1px solid #4ade80' : '1px solid var(--border-subtle)',
-              padding: '8px 14px',
-              borderRadius: '8px',
-              fontSize: '0.82rem',
+              padding: '6px 11px',
+              borderRadius: '6px',
+              fontSize: '0.78rem',
               fontWeight: 600,
               cursor: disabled ? 'not-allowed' : 'pointer',
               display: 'flex',
               alignItems: 'center',
-              gap: '6px',
+              gap: '5px',
             }}
           >
-            <Globe size={13} />
+            <Globe size={12} />
             Crawl Website
           </button>
         </div>
@@ -245,93 +262,109 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       {/* Target Details Card */}
       {editorMode === 'none' && (
         <div style={{
-          background: 'rgba(0, 0, 0, 0.35)',
-          borderRadius: '10px',
+          background: 'rgba(0, 0, 0, 0.28)',
+          borderRadius: '8px',
           border: '1px solid rgba(255, 255, 255, 0.05)',
-          padding: '16px',
+          padding: '12px 16px',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '12px' }}>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-                <span style={{ fontSize: '1.05rem', fontWeight: 700, color: '#f1f5f9' }}>
-                  {currentTarget.name}
-                </span>
-                <span style={{
-                  background: currentTarget.endpointUrl ? 'rgba(56, 189, 248, 0.2)' : currentTarget.sourceUrl ? 'rgba(74, 222, 128, 0.2)' : 'rgba(56, 189, 248, 0.15)',
-                  color: currentTarget.endpointUrl ? '#38bdf8' : currentTarget.sourceUrl ? '#4ade80' : '#b7c7c9',
-                  padding: '2px 8px',
-                  borderRadius: '4px',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  fontFamily: 'var(--font-mono)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                }}>
-                  {currentTarget.endpointUrl && <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38bdf8', display: 'inline-block' }} />}
-                  {currentTarget.badge}
-                </span>
-              </div>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
-                {currentTarget.description}
-              </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <span style={{ fontSize: '0.98rem', fontWeight: 700, color: '#f1f5f9' }}>
+                {currentTarget.name}
+              </span>
+              <span style={{
+                background: currentTarget.endpointUrl ? 'rgba(56, 189, 248, 0.2)' : currentTarget.sourceUrl ? 'rgba(74, 222, 128, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                color: currentTarget.endpointUrl ? '#38bdf8' : currentTarget.sourceUrl ? '#4ade80' : '#cbd5e1',
+                padding: '2px 8px',
+                borderRadius: '4px',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                fontFamily: 'var(--font-mono)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '5px',
+              }}>
+                {currentTarget.endpointUrl && <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#38bdf8', display: 'inline-block' }} />}
+                {currentTarget.badge}
+              </span>
 
               {currentTarget.endpointUrl && (
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '4px 10px', borderRadius: '6px', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
-                  <ExternalLink size={12} />
-                  Target URL: {currentTarget.endpointUrl}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.75rem', color: '#38bdf8', background: 'rgba(56, 189, 248, 0.1)', padding: '3px 8px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>
+                  <ExternalLink size={11} />
+                  {currentTarget.endpointUrl}
                 </div>
               )}
 
               {currentTarget.sourceUrl && (
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.78rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.1)', padding: '4px 10px', borderRadius: '6px', fontFamily: 'var(--font-mono)', marginBottom: '8px' }}>
-                  <Globe size={12} />
-                  Ingested From: {currentTarget.sourceUrl}
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '5px', fontSize: '0.75rem', color: '#4ade80', background: 'rgba(74, 222, 128, 0.1)', padding: '3px 8px', borderRadius: '4px', fontFamily: 'var(--font-mono)' }}>
+                  <Globe size={11} />
+                  {currentTarget.sourceUrl}
                 </div>
               )}
             </div>
 
-            <div style={{
-              background: 'rgba(243, 103, 79, 0.08)',
-              border: '1px solid rgba(243, 103, 79, 0.25)',
-              padding: '8px 12px',
-              borderRadius: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-            }}>
-              <Lock size={15} color="#f3674f" />
-              <div>
-                <div style={{ fontSize: '0.68rem', color: '#f3674f', fontWeight: 700 }}>HIGH-RISK SECRET CANARY</div>
-                <div style={{ fontSize: '0.8rem', fontFamily: 'var(--font-mono)', color: '#fed7aa', fontWeight: 600 }}>
+            {/* High-Risk Canary Token Badge (Interactive & Copyable) */}
+            <div
+              onClick={handleCopySecret}
+              title="Click to copy secret canary token"
+              style={{
+                background: 'rgba(243, 103, 79, 0.08)',
+                border: '1px solid rgba(243, 103, 79, 0.25)',
+                padding: '5px 10px',
+                borderRadius: '6px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.15s ease',
+              }}
+            >
+              <Lock size={13} color="#f3674f" />
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span style={{ fontSize: '0.68rem', color: '#f3674f', fontWeight: 700 }}>CANARY:</span>
+                <code style={{ fontSize: '0.76rem', fontFamily: 'var(--font-mono)', color: '#fed7aa', fontWeight: 600 }}>
                   {currentTarget.secretToProtect}
-                </div>
+                </code>
               </div>
+              <button
+                type="button"
+                style={{
+                  background: 'transparent',
+                  border: 'none',
+                  color: copiedSecret ? '#4ade80' : 'var(--text-dim)',
+                  cursor: 'pointer',
+                  padding: '2px',
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                {copiedSecret ? <Check size={12} color="#4ade80" /> : <Copy size={12} />}
+              </button>
             </div>
           </div>
 
           {/* Toggle System Prompt Viewer */}
-          <div style={{ marginTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.06)', paddingTop: '10px' }}>
+          <div style={{ marginTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.05)', paddingTop: '8px' }}>
             <button
               onClick={() => setShowPrompt(!showPrompt)}
               style={{
                 background: 'transparent',
                 border: 'none',
                 color: 'var(--text-muted)',
-                fontSize: '0.78rem',
+                fontSize: '0.76rem',
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
-                padding: '4px 0',
+                gap: '5px',
+                padding: '2px 0',
               }}
             >
-              {showPrompt ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-              {showPrompt ? 'Hide Active Target Prompt' : 'Inspect Active Target System Prompt'}
+              {showPrompt ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
+              {showPrompt ? 'Hide Target Prompt' : 'Inspect Target Prompt'}
             </button>
 
             {showPrompt && (
-              <pre className="terminal-code" style={{ marginTop: '8px', maxHeight: '180px' }}>
+              <pre className="terminal-code" style={{ marginTop: '8px', maxHeight: '160px', fontSize: '0.78rem' }}>
                 {currentTarget.systemPrompt}
               </pre>
             )}
@@ -342,18 +375,14 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       {/* Custom Target Editor */}
       {editorMode === 'custom' && (
         <div style={{
-          background: 'rgba(185, 177, 168, 0.05)',
-          borderRadius: '10px',
-          border: '1px solid rgba(185, 177, 168, 0.3)',
-          padding: '16px',
+          background: 'rgba(192, 132, 252, 0.04)',
+          borderRadius: '8px',
+          border: '1px solid rgba(192, 132, 252, 0.25)',
+          padding: '14px',
         }}>
-          <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#e9d5ff', marginBottom: '12px' }}>
-            Configure Custom Target Agent
-          </h3>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
                 Agent Name
               </label>
               <input
@@ -366,17 +395,17 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#fff',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
-                Confidential Secret to Protect
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
+                Confidential Secret Canary
               </label>
               <input
                 aria-label="Fictional canary to protect"
@@ -388,44 +417,44 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#ffedd5',
                   fontFamily: 'var(--font-mono)',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               />
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+          <div style={{ marginBottom: '10px' }}>
+            <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
               Target System Prompt & Policy Rules
             </label>
             <textarea
               aria-label="Target system prompt"
               maxLength={20000}
-              rows={4}
+              rows={3}
               value={customPrompt}
               onChange={(e) => setCustomPrompt(e.target.value)}
               style={{
                 width: '100%',
                 background: '#070a12',
                 border: '1px solid var(--border-subtle)',
-                borderRadius: '6px',
+                borderRadius: '5px',
                 color: '#fff',
                 fontFamily: 'var(--font-mono)',
-                padding: '8px',
-                fontSize: '0.8rem',
+                padding: '8px 10px',
+                fontSize: '0.78rem',
               }}
             />
           </div>
 
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={handleApplyCustom} disabled={disabled || !customPrompt.trim() || !customName.trim() || !customSecret.trim()} className="btn-cyber-primary" style={{ fontSize: '0.82rem' }}>
+            <button onClick={handleApplyCustom} disabled={disabled || !customPrompt.trim() || !customName.trim() || !customSecret.trim()} className="btn-cyber-primary" style={{ fontSize: '0.78rem', padding: '7px 14px' }}>
               Apply Custom Agent
             </button>
-            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.82rem' }}>
+            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.78rem', padding: '7px 14px' }}>
               Cancel
             </button>
           </div>
@@ -435,24 +464,14 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       {/* Live HTTP Endpoint Editor */}
       {editorMode === 'live-endpoint' && (
         <div style={{
-          background: 'rgba(56, 189, 248, 0.05)',
-          borderRadius: '10px',
-          border: '1px solid rgba(56, 189, 248, 0.3)',
-          padding: '16px',
+          background: 'rgba(56, 189, 248, 0.04)',
+          borderRadius: '8px',
+          border: '1px solid rgba(56, 189, 248, 0.25)',
+          padding: '14px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <Radio size={16} color="#38bdf8" />
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#bae6fd' }}>
-              Connect Live Agent / Chatbot HTTP Endpoint
-            </h3>
-          </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
-            NEMO-RED will send live adversarial test payloads directly over HTTP POST to your running web service and evaluate real-time responses.
-          </p>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
                 Endpoint Name (optional)
               </label>
               <input
@@ -465,15 +484,16 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#fff',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               />
             </div>
+
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
                 Payload Format
               </label>
               <select
@@ -484,69 +504,69 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#fff',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               >
-                <option value="message">Standard JSON: &#123; message: &quot;...&quot; &#125;</option>
-                <option value="prompt">Standard JSON: &#123; prompt: &quot;...&quot; &#125;</option>
-                <option value="messages">OpenAI Format: &#123; messages: [...] &#125;</option>
+                <option value="message">JSON: &#123; message: &quot;...&quot; &#125;</option>
+                <option value="prompt">JSON: &#123; prompt: &quot;...&quot; &#125;</option>
+                <option value="messages">OpenAI: &#123; messages: [...] &#125;</option>
               </select>
             </div>
           </div>
 
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
-              Endpoint URL (e.g. https://api.my-agent.com/v1/chat or http://localhost:8000/chat)
+          <div style={{ marginBottom: '10px' }}>
+            <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
+              Live Endpoint URL
             </label>
             <input
               aria-label="Endpoint URL"
               type="url"
-              placeholder="https://api.mycompany.com/api/chat"
+              placeholder="https://api.mycompany.com/v1/chat"
               value={endpointUrl}
               onChange={(e) => setEndpointUrl(e.target.value)}
               style={{
                 width: '100%',
                 background: '#070a12',
                 border: '1px solid var(--border-subtle)',
-                borderRadius: '6px',
+                borderRadius: '5px',
                 color: '#38bdf8',
                 fontFamily: 'var(--font-mono)',
-                padding: '8px',
-                fontSize: '0.85rem',
+                padding: '6px 10px',
+                fontSize: '0.82rem',
               }}
             />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
-                Authorization Header (optional)
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
+                Auth Header (optional)
               </label>
               <input
                 aria-label="Authorization header"
                 type="text"
-                placeholder="Bearer sk-... or custom token"
+                placeholder="Bearer sk-..."
                 value={endpointAuth}
                 onChange={(e) => setEndpointAuth(e.target.value)}
                 style={{
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#fff',
                   fontFamily: 'var(--font-mono)',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
-                Secret Canary to Probe for
+              <label style={{ fontSize: '0.72rem', color: 'var(--text-muted)', display: 'block', marginBottom: '3px' }}>
+                Secret Canary to Probe
               </label>
               <input
                 aria-label="Secret canary token"
@@ -557,11 +577,11 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                   width: '100%',
                   background: '#070a12',
                   border: '1px solid var(--border-subtle)',
-                  borderRadius: '6px',
+                  borderRadius: '5px',
                   color: '#fed7aa',
                   fontFamily: 'var(--font-mono)',
-                  padding: '8px',
-                  fontSize: '0.85rem',
+                  padding: '6px 10px',
+                  fontSize: '0.82rem',
                 }}
               />
             </div>
@@ -572,11 +592,11 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
               onClick={handleApplyEndpoint}
               disabled={disabled || !endpointUrl.trim()}
               className="btn-cyber-primary"
-              style={{ fontSize: '0.82rem', background: '#0284c7' }}
+              style={{ fontSize: '0.78rem', padding: '7px 14px', background: '#0284c7' }}
             >
               Connect Live Endpoint
             </button>
-            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.82rem' }}>
+            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.78rem', padding: '7px 14px' }}>
               Cancel
             </button>
           </div>
@@ -586,22 +606,12 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
       {/* Website URL Recon Ingestion Editor */}
       {editorMode === 'live-crawl' && (
         <div style={{
-          background: 'rgba(74, 222, 128, 0.05)',
-          borderRadius: '10px',
-          border: '1px solid rgba(74, 222, 128, 0.3)',
-          padding: '16px',
+          background: 'rgba(74, 222, 128, 0.04)',
+          borderRadius: '8px',
+          border: '1px solid rgba(74, 222, 128, 0.25)',
+          padding: '14px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <Globe size={16} color="#4ade80" />
-            <h3 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#bbf7d0' }}>
-              Crawl & Synthesize Target from Any Public Website URL
-            </h3>
-          </div>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '14px' }}>
-            Enter any company or organization URL (e.g. <code>https://stripe.com</code>, <code>https://openai.com</code>). NEMO-RED will extract policies and use NVIDIA Nemotron to synthesize a full enterprise red-team sandbox.
-          </p>
-
-          <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+          <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
             <input
               aria-label="Website URL to crawl"
               type="url"
@@ -613,11 +623,11 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
                 flex: 1,
                 background: '#070a12',
                 border: '1px solid var(--border-subtle)',
-                borderRadius: '6px',
+                borderRadius: '5px',
                 color: '#4ade80',
                 fontFamily: 'var(--font-mono)',
-                padding: '8px 12px',
-                fontSize: '0.85rem',
+                padding: '6px 10px',
+                fontSize: '0.82rem',
               }}
             />
             <button
@@ -625,31 +635,32 @@ export const TargetSelector: React.FC<TargetSelectorProps> = ({
               disabled={disabled || isCrawling || !crawlUrl.trim()}
               className="btn-cyber-primary"
               style={{
-                fontSize: '0.82rem',
+                fontSize: '0.78rem',
+                padding: '7px 14px',
                 background: '#16a34a',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '6px',
+                gap: '5px',
                 whiteSpace: 'nowrap',
               }}
             >
-              {isCrawling ? <RefreshCw size={14} className="spin" /> : <Globe size={14} />}
-              {isCrawling ? 'Crawling & Analyzing...' : 'Crawl & Synthesize'}
+              {isCrawling ? <RefreshCw size={13} className="spin" /> : <Globe size={13} />}
+              {isCrawling ? 'Crawling...' : 'Crawl & Synthesize'}
             </button>
-            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.82rem' }}>
+            <button onClick={() => setEditorMode('none')} className="btn-cyber-ghost" style={{ fontSize: '0.78rem', padding: '7px 14px' }}>
               Cancel
             </button>
           </div>
 
           {crawlError && (
-            <div style={{ color: '#f87171', fontSize: '0.8rem', background: 'rgba(239, 68, 68, 0.1)', padding: '8px 12px', borderRadius: '6px', marginBottom: '10px' }}>
+            <div style={{ color: '#f87171', fontSize: '0.76rem', background: 'rgba(239, 68, 68, 0.1)', padding: '6px 10px', borderRadius: '5px', marginTop: '6px' }}>
               {crawlError}
             </div>
           )}
 
           {crawlSuccess && (
-            <div style={{ color: '#4ade80', fontSize: '0.8rem', background: 'rgba(74, 222, 128, 0.1)', padding: '8px 12px', borderRadius: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <CheckCircle2 size={14} />
+            <div style={{ color: '#4ade80', fontSize: '0.76rem', background: 'rgba(74, 222, 128, 0.1)', padding: '6px 10px', borderRadius: '5px', display: 'flex', alignItems: 'center', gap: '5px', marginTop: '6px' }}>
+              <CheckCircle2 size={13} />
               {crawlSuccess}
             </div>
           )}
