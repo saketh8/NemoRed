@@ -8,3 +8,6 @@ artifacts
 .wrangler
 .dev.vars
 .dev.vars.*
+
+dist
+.vinext

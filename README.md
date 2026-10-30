@@ -6,6 +6,8 @@
 
 NEMO-RED helps AI application builders inspect how their agent's system prompt responds to adversarial requests. Five Nemotron personas generate probes; a simulated target or configured HTTP agent responds; a separate Nemotron call judges the transcript. A defense generator proposes a revised prompt and replays one discovered exploit.
 
+**Hosted studio:** https://nemored.nemored.workers.dev (live inference requires Cloudflare runtime secrets).
+
 ## Run locally
 
 Requires Node.js 22.13+ and a Nebius Token Factory API key with access to the configured NVIDIA model.

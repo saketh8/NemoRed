@@ -2,6 +2,27 @@
 
 This is a server-backed Next.js application. A static export cannot run the inference routes. Hosting the web app outside Nebius is compatible with the stated technology requirement when the actual inference uses NVIDIA models on Nebius Token Factory; document that architecture clearly.
 
+## Cloudflare Workers
+
+Public URL: https://nemored.nemored.workers.dev
+
+The Workers build uses vinext and the Cloudflare Vite plugin. The original Next.js development and Node deployment scripts remain available. Cloudflare Pages static hosting does not run this application's server-side routes.
+
+```bash
+npm ci
+npm run build:vinext
+npm run start:vinext -- --port 3006
+# After verifying the local preview:
+npx wrangler login
+npm run deploy:vinext
+```
+
+`wrangler.jsonc` defines the Worker and asset routing. The build generates `dist/server/wrangler.json`, which the preview and deployment scripts use. Build output and local development secrets are ignored by Git. `deploy:vinext` deploys the existing build; run `build:vinext` after source changes.
+
+Configure `NEBIUS_API_KEY` as a Worker secret to enable live inference. Set the model and base URL from `.env.example` as appropriate. Tavily and LangSmith are optional; configure their values only if those integrations should be enabled in production. Use the Cloudflare dashboard's Worker settings or `npx wrangler secret put VARIABLE_NAME --config dist/server/wrangler.json`. Secrets are not uploaded by the normal deploy command.
+
+Verify `/api/status` and a fictional sandbox test after configuring secrets. A loaded website or sample walkthrough alone does not verify live inference. Keep Cloudflare and provider quotas sufficient for judging.
+
 ## Node host
 
 1. Deploy the repository root containing `package.json` to a Node.js 22.13+ host.
